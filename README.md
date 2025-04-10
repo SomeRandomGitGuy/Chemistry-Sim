@@ -16,11 +16,16 @@ ChatGPT was used for:
 - Ionic Bonding
 - Only Sodium and Chlorine
 
+### RCS++
+
 **RCS++.js** is the most recent, and updated version, featuring:
 
 - Ionic bonding, compatable with multiple of one atom
+  - Uses Coloumbs law for bonding physics
 - Covalent bonding, but without Coordinate Covalent Bonds
+  - Uses Hooke's law spring physics for the bonding
 - Metallic bonding
+  - Also uses spring physics
 - Expanded octets for Covalent bonding
 
 **Possibly upcoming features**
