@@ -10,14 +10,15 @@ ChatGPT was used for:
 
 ## Basic Information
 
+### RCS
+
 <details>
-    <summary>**RCS.js** is the first version of the simulation, featuring only: </summary>
-    <br>
-
-    - Spring based physics
-    - Ionic Bonding
-    - Only Sodium and Chlorine
-
+    <summary>	RCS.js is the first version of the simulation, featuring only </summary>
+    <ul>
+	<li>Spring based physics</li>
+	<li>Ionic Bonding</li>
+	<li>Only a set amount of atoms</li>
+	</ul>
 </details>
 
 ### RCS++
