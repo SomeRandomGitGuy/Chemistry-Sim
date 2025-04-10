@@ -7,3 +7,23 @@ ChatGPT was used for:
 - Information on how the chemistry should work
 - Basic rules/formulas to govern the chemistry
 - But no actual code was taken from AI
+
+## Basic Information
+
+**RCS.js** is the first version of the simulation, featuring only:
+
+- Spring based physics
+- Ionic Bonding
+- Only Sodium and Chlorine
+
+**RCS++.js** is the most recent, and updated version, featuring:
+
+- Ionic bonding, compatable with multiple of one atom
+- Covalent bonding, but without Coordinate Covalent Bonds
+- Metallic bonding
+- Expanded octets for Covalent bonding
+
+**Possibly upcoming features**
+
+- Light (Electromagnetic spectrum)
+- Some added hard-coded logic for atoms like silicon and their bonding habits
