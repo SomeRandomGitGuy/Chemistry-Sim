@@ -1,7 +1,6 @@
 // for the title screen
 //
 
-
 let atoms = [];
 
 const canv = document.querySelector(".canv");
@@ -10,8 +9,22 @@ const dpr = window.devicePixelRatio;
 const rect = canv.getBoundingClientRect();
 canv.width = rect.width * dpr;
 canv.height = rect.height * dpr;
-ctx.font = "70px serif";
+ctx.font = "70px courier new";
 ctx.fillStyle = "black";
+
+function circleification(px, py, r, ang) {
+  return [px + r * Math.cos(ang), py + r * Math.sin(ang)];
+}
+
+function toradian(degree) {
+  return degree * (Math.PI / 180);
+}
+
+function drawcirc(posx, posy, rad) {
+  ctx.beginPath();
+  ctx.arc(posx, posy, rad, 0, Math.PI * 2, true);
+  ctx.stroke();
+}
 
 let counter = 0;
 function render() {
@@ -26,8 +39,10 @@ function render() {
     ctx.fill();
     ctx.fillStyle = "black";
 
-    ctx.font = "30px serif";
-    ctx.fillText(a.elem, a.X, a.Y);
+    ctx.font = "bold 30px courier new";
+    ctx.fillText(a.elem[0], a.X, a.Y);
+    ctx.font = "bold 16px courier new";
+    ctx.fillText(a.elem[1], a.X + 20, a.Y);
     ctx.font = "18px serif";
     ctx.fillText(a.neutrons + a.atomn, a.X - 25, a.Y - 15);
     ctx.font = "20px serif";
@@ -49,7 +64,7 @@ function render() {
       }
       drawcirc(a.X + 18, a.Y - 2, 15 * (l + 1) + 40);
       for (let i = 0; i < 360; i += 360 / a.elec[l]) {
-        let turn = toradian(i + (counter * 2) / (l + 3));
+        let turn = toradian(i + counter / 2 / (l + 3));
         let pos = circleification(a.X + 15, a.Y - 1, 15 * (l + 1) + 40, turn);
 
         ctx.fillText("x", pos[0], pos[1]);
@@ -105,7 +120,7 @@ function render() {
 }
 
 class atom {
-  constructor(e, x, y, ele, chg) {
+  constructor(e, x, y, ele, chg, n, an) {
     this.pos = [];
     this.X = x;
     this.Y = y;
@@ -114,6 +129,8 @@ class atom {
     this.charge = chg;
     this.atomn = 0;
     this.elecneg = 0;
+    this.neutrons = n;
+    this.atomn = an;
     //console.log(this.atomn);
     this.valence = ele[ele.length - 1];
     this.bonds = [];
@@ -122,9 +139,14 @@ class atom {
     this.cshared = [];
   }
 }
-
-atoms.push(new atom("C", window.innerWidth / 2, window.innerHeight / 2, [2, 4], 0));
-
-
-
-setInterval(render,1);
+let w = 180;
+atoms.push(new atom("C ", window.innerWidth - 4 * w, window.innerHeight, [2, 4], 0, 6, 6));
+atoms.push(new atom("H ", window.innerWidth - 3 * w, window.innerHeight, [1], 0, 0, 1));
+atoms.push(new atom("Eu", window.innerWidth - 2 * w, window.innerHeight, [2, 8, 18, 25, 8, 2], 0, 63, 63));
+atoms.push(new atom("Mg", window.innerWidth - 1 * w, window.innerHeight, [2, 8, 2], 0, 12, 12));
+atoms.push(new atom("I ", window.innerWidth - 0 * w, window.innerHeight, [2, 4], 0, 53, 53));
+atoms.push(new atom("S ", window.innerWidth + 1 * w, window.innerHeight, [2, 4], 0, 6, 6));
+atoms.push(new atom("Ti", window.innerWidth + 2 * w, window.innerHeight, [2, 4], 0, 6, 6));
+atoms.push(new atom("Rn", window.innerWidth + 3 * w, window.innerHeight, [2, 4], 0, 6, 6));
+atoms.push(new atom("Y ", window.innerWidth + 4 * w, window.innerHeight, [2, 4], 0, 6, 6));
+setInterval(render, 1);
