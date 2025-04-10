@@ -760,8 +760,12 @@ class atom {
       a.vy = a.vy + -1 * fy * myst;
     }
 
-    this.vx *= 0.999;
-    this.vy *= 0.999;
+    let damp = 0.999;
+    if (document.querySelector(".chck").checked === true) {
+      damp = 0.8;
+    }
+    this.vx *= damp;
+    this.vy *= damp;
 
     this.X += this.vx * myst;
     this.Y += this.vy * myst;

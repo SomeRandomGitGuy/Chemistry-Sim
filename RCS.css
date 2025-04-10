@@ -47,6 +47,18 @@ body {
     height: 20px;
 }
 
+.chck {
+    position: absolute;
+    left: 27%;
+    top: 97%;
+}
+
+p {
+    position: absolute;
+    left: 30%;
+    top: 95%;
+}
+
 .bar {
     position: absolute;
     left: 0%;
