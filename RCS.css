@@ -53,9 +53,14 @@ body {
     top: 97%;
 }
 
-p {
+.slow {
     position: absolute;
     left: 30%;
+    top: 95%;
+}
+.perf1 {
+    position: absolute;
+    left: 88%;
     top: 95%;
 }
 
