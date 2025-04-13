@@ -425,7 +425,9 @@ function calculateBonding() {
         a.mbonds.length === 0 &&
         t.mbonds.length === 0 &&
         a.bonds.length === 0 &&
-        t.bonds.length === 0
+        t.bonds.length === 0 &&
+        a.section != "Noble gases" &&
+        t.section != "Noble gases"
       ) {
         let abondgoals = a.elem != "H" && a.elem != "He" ? 8 - av : 2 - av;
         let tbondgoals = t.elem != "H" && t.elem != "He" ? 8 - tv : 2 - av;
@@ -540,6 +542,9 @@ class particle {
       this.vx *= -1;
     }
     if (this.Y > window.innerHeight * 2 || this.Y < 100) {
+      //console.log("help mee");
+      if (this.Y < 100) this.Y = 105;
+
       this.vy *= -1;
     }
     if (this.X > window.innerWidth * 2 + 10 || this.X < 1 - 10) {
@@ -555,7 +560,15 @@ class particle {
 
 function scaleHalfLife(hlf) {
   const mhf = 14050000000;
-  return (Math.log2(hlf + 1) / Math.log2(mhf)) * 240 + 1;
+  return (Math.log2(hlf + 1) / Math.log2(mhf)) * 60 + 1;
+}
+
+function findAtom(name) {
+  for (let a of data) {
+    if (a.symbol === name) {
+      return a;
+    }
+  }
 }
 
 function springForce(a, b, strength, length) {
@@ -623,12 +636,20 @@ class atom {
             this.nextLifeCheck = Date.now() + scaleHalfLife(rad.halfLife) * 1000;
             this.decaytype = rad.decay;
             console.log(scaleHalfLife(rad.halfLife));
+            if (rad.hasOwnProperty("neutronReaction")) {
+              this.fissionable = true;
+              this.fisreact = rad.neutronReaction;
+            }
           }
         }
       } else if (isotopes[this.elem].neutrons === this.neutrons) {
         this.nextLifeCheck = Date.now() + scaleHalfLife(isotopes[this.elem].halfLife) * 1000;
-        this.decaytype = rad.decay;
+        this.decaytype = isotopes[this.elem].decay;
         console.log(scaleHalfLife(isotopes[this.elem].halfLife));
+        if (isotopes[this.elem].hasOwnProperty("neutronReaction")) {
+          this.fissionable = true;
+          this.fisreact = rad.neutronReaction;
+        }
       }
     }
   }
@@ -730,19 +751,66 @@ class atom {
       a.vy = a.vy + -1 * fy * myst;
     }
 
+    for (let p of particles) {
+      if (dist(this.X, this.Y, p.X, p.Y) < 190 && p.charge === 0 && this.fissionable === true) {
+        let postemp = -170;
+        for (let res of this.fisreact.result) {
+          if (res.element === "neutrons") {
+            for (let i = 0; i < res.amount; i++) {
+              particles.push(new particle(this.X + 200, this.Y + 200, newran(100) - 50, newran(100) - 50, 0));
+            }
+          } else {
+            let extrname = res.element.slice(0, res.element.indexOf("-"));
+            let extrnumber = res.element.slice(res.element.indexOf("-") + 1);
+            console.log(extrname);
+            let neutnum = parseInt(extrnumber) - (data.indexOf(findAtom(extrname)) + 1);
+            let datause = data[this.atomn - 1];
+            for (let i = 0; i < res.amount; i++) {
+              atoms.push(new atom(extrname, this.X + postemp, this.Y, datause.shells, true, postemp / 2, newran(100) - 50, neutnum, 0));
+            }
+            postemp = 170;
+          }
+        }
+        atoms.splice(atoms.indexOf(this), 1);
+      }
+    }
+
     if (counter % 20) {
       if (this.hasOwnProperty("nextLifeCheck")) {
-        if (Date.now() > this.nextLifeCheck && this.decaytype === "alpha") {
+        if (Date.now() > this.nextLifeCheck && newran(2) === 1) {
+          if (this.decaytype === "alpha") {
+            let newelem = this.atomn - 2;
+            this.elem = data[newelem - 1].symbol;
+            this.atomn -= 2;
+            this.elec = data[newelem - 1].shells;
+            this.elecneg = data[newelem - 1].electronegativity;
+            this.section = data[newelem - 1].section;
+            this.neutrons -= 2;
+            atoms.push(new atom("He", this.X + 120, this.Y, [0], true, 0, 0, 2, 2));
+          } else if (this.decaytype === "beta-") {
+            let newelem = this.atomn + 1;
+            this.neutrons -= 1;
+            this.atomn += 1;
+            this.elem = data[newelem - 1].symbol;
+            this.elec = data[newelem - 1].shells;
+            //this.charge = 1;
+            this.elecneg = data[newelem - 1].electronegativity;
+            this.section = data[newelem - 1].section;
+          } else if (this.decaytype === "beta+") {
+            let newelem = this.atomn - 1;
+            this.neutrons += 1;
+            this.atomn += 1;
+            this.elem = data[newelem - 1].symbol;
+            this.elec = data[newelem - 1].shells;
+            //this.charge = -1;
+            this.elecneg = data[newelem - 1].electronegativity;
+            this.section = data[newelem - 1].section;
+          }
           delete this.nextLifeCheck;
           this.updateRadioTimer();
-          let newelem = this.atomn - 2;
-          this.elem = data[newelem - 1].symbol;
-          this.elec = data[newelem - 1].shells;
-          this.elecneg = data[newelem - 1].electronegativity;
-          this.section = data[newelem - 1].section;
-          this.neutrons -= 2;
-          atoms.push(new atom("He", this.X + 120, this.Y, [0], true, 0, 0, 2, 2));
-          console.log(atoms);
+        } else if (Date.now() > this.nextLifeCheck) {
+          delete this.nextLifeCheck;
+          this.updateRadioTimer();
         }
       }
     }
