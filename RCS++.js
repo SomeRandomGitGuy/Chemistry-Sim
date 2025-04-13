@@ -596,22 +596,6 @@ class atom {
       }
     }
 
-    if (isotopes.hasOwnProperty(this.elem) === true) {
-      if (isotopes[this.elem].constructor === Array) {
-        for (let rad of isotopes[this.elem]) {
-          if (rad.neutrons === this.neutrons) {
-            this.nextLifeCheck = Date.now() + scaleHalfLife(rad.halfLife) * 1000;
-            console.log(scaleHalfLife(rad.halfLife));
-          }
-        }
-      } else {
-        if (isotopes[this.elem].neutrons === this.neutrons) {
-          this.nextLifeCheck = Date.now() + scaleHalfLife(isotopes[this.elem].halfLife) * 1000;
-          console.log(scaleHalfLife(isotopes[this.elem].halfLife));
-        }
-      }
-    }
-
     //console.log(this.atomn);
     this.valence = ele[ele.length - 1];
     this.vx = 0 + newran(0);
@@ -626,6 +610,26 @@ class atom {
       this.vx = v1;
       this.vy = v2;
       this.charge = charge;
+    }
+
+    this.updateRadioTimer();
+  }
+
+  updateRadioTimer() {
+    if (isotopes.hasOwnProperty(this.elem) === true) {
+      if (isotopes[this.elem].constructor === Array) {
+        for (let rad of isotopes[this.elem]) {
+          if (rad.neutrons === this.neutrons) {
+            this.nextLifeCheck = Date.now() + scaleHalfLife(rad.halfLife) * 1000;
+            this.decaytype = rad.decay;
+            console.log(scaleHalfLife(rad.halfLife));
+          }
+        }
+      } else if (isotopes[this.elem].neutrons === this.neutrons) {
+        this.nextLifeCheck = Date.now() + scaleHalfLife(isotopes[this.elem].halfLife) * 1000;
+        this.decaytype = rad.decay;
+        console.log(scaleHalfLife(isotopes[this.elem].halfLife));
+      }
     }
   }
 
@@ -728,7 +732,9 @@ class atom {
 
     if (counter % 20) {
       if (this.hasOwnProperty("nextLifeCheck")) {
-        if (Date.now() > this.nextLifeCheck) {
+        if (Date.now() > this.nextLifeCheck && this.decaytype === "alpha") {
+          delete this.nextLifeCheck;
+          this.updateRadioTimer();
           let newelem = this.atomn - 2;
           this.elem = data[newelem - 1].symbol;
           this.elec = data[newelem - 1].shells;
