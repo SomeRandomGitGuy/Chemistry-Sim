@@ -167,11 +167,16 @@ function drawcirc(posx, posy, rad) {
   ctx.stroke();
 }
 
+function saveAll() {
+  return JSON.stringify(atoms.concat(particles));
+}
+
 function render() {
-  let flag1 = performance.now();
   counter++;
+
   ctx.clearRect(0, 0, canv.width, canv.height);
   for (let a of atoms) {
+    ctx.scale(0.98, 0.98);
     ctx.font = "20px serif";
 
     ctx.beginPath();
@@ -273,6 +278,7 @@ function render() {
     if (a.charge < 0) ctx.fillText(a.charge, a.X + 2, a.Y - 25);
 
     ctx.font = "70px serif";
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
   for (let e of particles) {
     ctx.font = "25px serif";
@@ -280,8 +286,6 @@ function render() {
     if (e.charge === 1) ctx.fillText("p", e.X, e.Y);
     if (e.charge === 0) ctx.fillText("n", e.X, e.Y);
   }
-  let flag2 = performance.now();
-  document.querySelector(".perf1").innerHTML = `render: ${(flag2 - flag1).toString().slice(0, 6)}`;
 }
 
 function numInArray(arrayinp, check) {
@@ -299,6 +303,7 @@ function dist(x1, y1, x2, y2) {
 }
 
 function iterate() {
+  let flag1 = performance.now();
   let bound = canv.getBoundingClientRect();
   if (mousedown && target === null) {
     for (let a of atoms) {
@@ -323,6 +328,9 @@ function iterate() {
   for (let e of particles) {
     e.update();
   }
+  render();
+  let flag2 = performance.now();
+  document.querySelector(".perf1").innerHTML = `render: ${(flag2 - flag1).toString().slice(0, 6)}`;
 }
 
 function clamp(n1, n2) {
@@ -560,7 +568,7 @@ class particle {
 
 function scaleHalfLife(hlf) {
   const mhf = 14050000000;
-  return (Math.log2(hlf + 1) / Math.log2(mhf)) * 60 + 1;
+  return (Math.log2(hlf + 1) / Math.log2(mhf)) * 15 + 1;
 }
 
 function findAtom(name) {
@@ -772,6 +780,7 @@ class atom {
           }
         }
         atoms.splice(atoms.indexOf(this), 1);
+        break;
       }
     }
 
@@ -915,5 +924,5 @@ document.querySelector(".btn2").onclick = clearall;
 
 render();
 
-setInterval(render, 1);
+//setInterval(render, 1);
 setInterval(iterate, 1);
