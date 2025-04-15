@@ -16,130 +16,6 @@ ctx.fillStyle = "black";
 let cval = "";
 
 // Data from CHATGPT
-const data = [
-  { symbol: "H", shells: [1], neut: 0, electronegativity: 2.2, section: "Nonmetals" },
-  { symbol: "He", shells: [2], neut: 2, electronegativity: 0, section: "Noble gases" },
-  { symbol: "Li", shells: [2, 1], neut: 4, electronegativity: 0.98, section: "Alkali metals" },
-  { symbol: "Be", shells: [2, 2], neut: 5, electronegativity: 1.57, section: "Alkaline earth metals" },
-  { symbol: "B", shells: [2, 3], neut: 6, electronegativity: 2.04, section: "Metalloids" },
-  { symbol: "C", shells: [2, 4], neut: 6, electronegativity: 2.55, section: "Nonmetals" },
-  { symbol: "N", shells: [2, 5], neut: 7, electronegativity: 3.04, section: "Nonmetals" },
-  { symbol: "O", shells: [2, 6], neut: 8, electronegativity: 3.44, section: "Nonmetals" },
-  { symbol: "F", shells: [2, 7], neut: 10, electronegativity: 3.98, section: "Halogens" },
-  { symbol: "Ne", shells: [2, 8], neut: 10, electronegativity: 0, section: "Noble gases" },
-  { symbol: "Na", shells: [2, 8, 1], neut: 12, electronegativity: 0.93, section: "Alkali metals" },
-  { symbol: "Mg", shells: [2, 8, 2], neut: 12, electronegativity: 1.31, section: "Alkaline earth metals" },
-  { symbol: "Al", shells: [2, 8, 3], neut: 14, electronegativity: 1.61, section: "Post-transition metals" },
-  { symbol: "Si", shells: [2, 8, 4], neut: 14, electronegativity: 1.9, section: "Metalloids" },
-  { symbol: "P", shells: [2, 8, 5], neut: 16, electronegativity: 2.19, section: "Nonmetals" },
-  { symbol: "S", shells: [2, 8, 6], neut: 16, electronegativity: 2.58, section: "Nonmetals" },
-  { symbol: "Cl", shells: [2, 8, 7], neut: 18, electronegativity: 3.16, section: "Halogens" },
-  { symbol: "Ar", shells: [2, 8, 8], neut: 22, electronegativity: 0, section: "Noble gases" },
-  { symbol: "K", shells: [2, 8, 8, 1], neut: 20, electronegativity: 0.82, section: "Alkali metals" },
-  { symbol: "Ca", shells: [2, 8, 8, 2], neut: 20, electronegativity: 1.0, section: "Alkaline earth metals" },
-  { symbol: "Sc", shells: [2, 8, 9, 2], neut: 24, electronegativity: 1.36, section: "Transition metals" },
-  { symbol: "Ti", shells: [2, 8, 10, 2], neut: 26, electronegativity: 1.54, section: "Transition metals" },
-  { symbol: "V", shells: [2, 8, 11, 2], neut: 28, electronegativity: 1.63, section: "Transition metals" },
-  { symbol: "Cr", shells: [2, 8, 13, 1], neut: 28, electronegativity: 1.66, section: "Transition metals" },
-  { symbol: "Mn", shells: [2, 8, 13, 2], neut: 30, electronegativity: 1.55, section: "Transition metals" },
-  { symbol: "Fe", shells: [2, 8, 14, 2], neut: 30, electronegativity: 1.83, section: "Transition metals" },
-  { symbol: "Co", shells: [2, 8, 15, 2], neut: 32, electronegativity: 1.88, section: "Transition metals" },
-  { symbol: "Ni", shells: [2, 8, 16, 2], neut: 31, electronegativity: 1.91, section: "Transition metals" },
-  { symbol: "Cu", shells: [2, 8, 18, 1], neut: 34, electronegativity: 1.9, section: "Transition metals" },
-  { symbol: "Zn", shells: [2, 8, 18, 2], neut: 35, electronegativity: 1.65, section: "Transition metals" },
-  { symbol: "Ga", shells: [2, 8, 18, 3], neut: 39, electronegativity: 1.81, section: "Post-transition metals" },
-  { symbol: "Ge", shells: [2, 8, 18, 4], neut: 41, electronegativity: 2.01, section: "Metalloids" },
-  { symbol: "As", shells: [2, 8, 18, 5], neut: 42, electronegativity: 2.18, section: "Metalloids" },
-  { symbol: "Se", shells: [2, 8, 18, 6], neut: 45, electronegativity: 2.55, section: "Nonmetals" },
-  { symbol: "Br", shells: [2, 8, 18, 7], neut: 45, electronegativity: 2.96, section: "Halogens" },
-  { symbol: "Kr", shells: [2, 8, 18, 8], neut: 48, electronegativity: 3.0, section: "Noble gases" },
-  { symbol: "Rb", shells: [2, 8, 18, 8, 1], neut: 48, electronegativity: 0.82, section: "Alkali metals" },
-  { symbol: "Sr", shells: [2, 8, 18, 8, 2], neut: 50, electronegativity: 0.95, section: "Alkaline earth metals" },
-  { symbol: "Y", shells: [2, 8, 18, 9, 2], neut: 50, electronegativity: 1.22, section: "Transition metals" },
-  { symbol: "Zr", shells: [2, 8, 18, 10, 2], neut: 51, electronegativity: 1.33, section: "Transition metals" },
-  { symbol: "Nb", shells: [2, 8, 18, 12, 1], neut: 52, electronegativity: 1.6, section: "Transition metals" },
-  { symbol: "Mo", shells: [2, 8, 18, 13, 1], neut: 54, electronegativity: 2.16, section: "Transition metals" },
-  { symbol: "Tc", shells: [2, 8, 18, 13, 2], neut: 55, electronegativity: 1.9, section: "Transition metals" },
-  { symbol: "Ru", shells: [2, 8, 18, 15, 1], neut: 57, electronegativity: 2.2, section: "Transition metals" },
-  { symbol: "Rh", shells: [2, 8, 18, 16, 1], neut: 58, electronegativity: 2.28, section: "Transition metals" },
-  { symbol: "Pd", shells: [2, 8, 18, 18, 1], neut: 60, electronegativity: 2.2, section: "Transition metals" },
-  { symbol: "Ag", shells: [2, 8, 18, 18, 1], neut: 61, electronegativity: 1.93, section: "Transition metals" },
-  { symbol: "Cd", shells: [2, 8, 18, 18, 2], neut: 64, electronegativity: 1.69, section: "Transition metals" },
-  { symbol: "In", shells: [2, 8, 18, 18, 3], neut: 66, electronegativity: 1.78, section: "Post-transition metals" },
-  { symbol: "Sn", shells: [2, 8, 18, 18, 4], neut: 68, electronegativity: 1.96, section: "Post-transition metals" },
-  { symbol: "Sb", shells: [2, 8, 18, 18, 5], neut: 71, electronegativity: 2.05, section: "Metalloids" },
-  { symbol: "I", shells: [2, 8, 18, 18, 7], neut: 74, electronegativity: 2.66, section: "Halogens" },
-  { symbol: "Te", shells: [2, 8, 18, 18, 6], neut: 76, electronegativity: 2.1, section: "Metalloids" },
-  { symbol: "Xe", shells: [2, 8, 18, 18, 8], neut: 80, electronegativity: 2.6, section: "Noble gases" },
-  { symbol: "Cs", shells: [2, 8, 18, 18, 8, 1], neut: 82, electronegativity: 0.79, section: "Alkali metals" },
-  { symbol: "Ba", shells: [2, 8, 18, 18, 8, 2], neut: 81, electronegativity: 0.89, section: "Alkaline earth metals" },
-  { symbol: "La", shells: [2, 8, 18, 18, 9, 2], neut: 82, electronegativity: 1.1, section: "Lanthanides" },
-  { symbol: "Ce", shells: [2, 8, 18, 19, 9, 2], neut: 82, electronegativity: 1.12, section: "Lanthanides" },
-  { symbol: "Pr", shells: [2, 8, 18, 21, 8, 2], neut: 84, electronegativity: 1.13, section: "Lanthanides" },
-  { symbol: "Nd", shells: [2, 8, 18, 22, 8, 2], neut: 84, electronegativity: 1.14, section: "Lanthanides" },
-  { symbol: "Pm", shells: [2, 8, 18, 23, 8, 2], neut: 84, electronegativity: 1.13, section: "Lanthanides" },
-  { symbol: "Sm", shells: [2, 8, 18, 24, 8, 2], neut: 88, electronegativity: 1.17, section: "Lanthanides" },
-  { symbol: "Eu", shells: [2, 8, 18, 25, 8, 2], neut: 89, electronegativity: 1.19, section: "Lanthanides" },
-  { symbol: "Gd", shells: [2, 8, 18, 25, 9, 2], neut: 93, electronegativity: 1.2, section: "Lanthanides" },
-  { symbol: "Tb", shells: [2, 8, 18, 27, 8, 2], neut: 94, electronegativity: 1.19, section: "Lanthanides" },
-  { symbol: "Dy", shells: [2, 8, 18, 28, 8, 2], neut: 97, electronegativity: 1.22, section: "Lanthanides" },
-  { symbol: "Ho", shells: [2, 8, 18, 29, 8, 2], neut: 98, electronegativity: 1.23, section: "Lanthanides" },
-  { symbol: "Er", shells: [2, 8, 18, 30, 8, 2], neut: 99, electronegativity: 1.24, section: "Lanthanides" },
-  { symbol: "Tm", shells: [2, 8, 18, 31, 8, 2], neut: 100, electronegativity: 1.25, section: "Lanthanides" },
-  { symbol: "Yb", shells: [2, 8, 18, 32, 8, 2], neut: 103, electronegativity: 1.1, section: "Lanthanides" },
-  { symbol: "Lu", shells: [2, 8, 18, 32, 9, 2], neut: 104, electronegativity: 1.27, section: "Lanthanides" },
-  { symbol: "Hf", shells: [2, 8, 18, 32, 10, 2], neut: 106, electronegativity: 1.3, section: "Transition metals" },
-  { symbol: "Ta", shells: [2, 8, 18, 32, 11, 2], neut: 108, electronegativity: 1.5, section: "Transition metals" },
-  { symbol: "W", shells: [2, 8, 18, 32, 12, 2], neut: 110, electronegativity: 2.36, section: "Transition metals" },
-  { symbol: "Re", shells: [2, 8, 18, 32, 13, 2], neut: 111, electronegativity: 1.9, section: "Transition metals" },
-  { symbol: "Os", shells: [2, 8, 18, 32, 14, 2], neut: 114, electronegativity: 2.2, section: "Transition metals" },
-  { symbol: "Ir", shells: [2, 8, 18, 32, 15, 2], neut: 115, electronegativity: 2.2, section: "Transition metals" },
-  { symbol: "Pt", shells: [2, 8, 18, 32, 17, 1], neut: 117, electronegativity: 2.28, section: "Transition metals" },
-  { symbol: "Au", shells: [2, 8, 18, 32, 18, 1], neut: 118, electronegativity: 2.54, section: "Transition metals" },
-  { symbol: "Hg", shells: [2, 8, 18, 32, 18, 2], neut: 121, electronegativity: 2.0, section: "Transition metals" },
-  { symbol: "Tl", shells: [2, 8, 18, 32, 18, 3], neut: 123, electronegativity: 1.62, section: "Post-transition metals" },
-  { symbol: "Pb", shells: [2, 8, 18, 32, 18, 4], neut: 125, electronegativity: 2.33, section: "Post-transition metals" },
-  { symbol: "Bi", shells: [2, 8, 18, 32, 18, 5], neut: 126, electronegativity: 2.02, section: "Post-transition metals" },
-  { symbol: "Po", shells: [2, 8, 18, 32, 18, 6], neut: 128, electronegativity: 2.0, section: "Metalloids" },
-  { symbol: "At", shells: [2, 8, 18, 32, 18, 7], neut: 125, electronegativity: 2.2, section: "Halogens" },
-  { symbol: "Rn", shells: [2, 8, 18, 32, 18, 8], neut: 131, electronegativity: 2.2, section: "Noble gases" },
-  { symbol: "Fr", shells: [2, 8, 18, 32, 18, 8, 1], neut: 136, electronegativity: 0.7, section: "Alkali metals" },
-  { symbol: "Ra", shells: [2, 8, 18, 32, 18, 8, 2], neut: 138, electronegativity: 0.9, section: "Alkaline Earth Metals" },
-  { symbol: "Ac", shells: [2, 8, 18, 32, 18, 9, 2], neut: 138, electronegativity: 1.1, section: "Actinides" },
-  { symbol: "Th", shells: [2, 8, 18, 32, 18, 10, 2], neut: 142, electronegativity: 1.3, section: "Actinides" },
-  { symbol: "Pa", shells: [2, 8, 18, 32, 18, 10, 2], neut: 140, electronegativity: 1.5, section: "Actinides" },
-  { symbol: "U", shells: [2, 8, 18, 32, 18, 10, 2], neut: 146, electronegativity: 1.38, section: "Actinides" },
-  { symbol: "Np", shells: [2, 8, 18, 32, 18, 11, 2], neut: 143, electronegativity: 1.36, section: "Actinides" },
-  { symbol: "Pu", shells: [2, 8, 18, 32, 18, 12, 2], neut: 144, electronegativity: 1.28, section: "Actinides" },
-  { symbol: "Am", shells: [2, 8, 18, 32, 18, 13, 2], neut: 150, electronegativity: 1.13, section: "Actinides" },
-  { symbol: "Cm", shells: [2, 8, 18, 32, 18, 14, 2], neut: 151, electronegativity: 1.3, section: "Actinides" },
-  { symbol: "Bk", shells: [2, 8, 18, 32, 18, 15, 2], neut: 142, electronegativity: 1.3, section: "Actinides" },
-  { symbol: "Cf", shells: [2, 8, 18, 32, 18, 16, 2], neut: 145, electronegativity: 1.3, section: "Actinides" },
-  { symbol: "Es", shells: [2, 8, 18, 32, 18, 17, 2], neut: 151, electronegativity: 1.3, section: "Actinides" },
-  { symbol: "Fm", shells: [2, 8, 18, 32, 18, 18, 2], neut: 157, electronegativity: 1.3, section: "Actinides" },
-  { symbol: "Md", shells: [2, 8, 18, 32, 18, 19, 2], neut: 158, electronegativity: 1.3, section: "Actinides" },
-  { symbol: "No", shells: [2, 8, 18, 32, 18, 20, 2], neut: 159, electronegativity: 1.3, section: "Actinides" },
-  { symbol: "Lr", shells: [2, 8, 18, 32, 18, 21, 2], neut: 162, electronegativity: 1.3, section: "Actinides" },
-  { symbol: "Rf", shells: [2, 8, 18, 32, 18, 22, 2], neut: 164, electronegativity: 1.3, section: "Transition Metals" },
-  { symbol: "Db", shells: [2, 8, 18, 32, 18, 23, 2], neut: 168, electronegativity: 1.3, section: "Transition Metals" },
-  { symbol: "Sg", shells: [2, 8, 18, 32, 18, 24, 2], neut: 173, electronegativity: 1.3, section: "Transition Metals" },
-  { symbol: "Bh", shells: [2, 8, 18, 32, 18, 25, 2], neut: 174, electronegativity: 1.3, section: "Transition Metals" },
-  { symbol: "Hs", shells: [2, 8, 18, 32, 18, 26, 2], neut: 177, electronegativity: 1.3, section: "Transition Metals" },
-  { symbol: "Mt", shells: [2, 8, 18, 32, 18, 27, 2], neut: 178, electronegativity: 1.3, section: "Unknown" },
-  { symbol: "Ds", shells: [2, 8, 18, 32, 18, 28, 2], neut: 181, electronegativity: 1.3, section: "Unknown" },
-  { symbol: "Rg", shells: [2, 8, 18, 32, 18, 29, 2], neut: 183, electronegativity: 1.3, section: "Unknown" },
-  { symbol: "Cn", shells: [2, 8, 18, 32, 18, 30, 2], neut: 185, electronegativity: 1.3, section: "Unknown" },
-  { symbol: "Nh", shells: [2, 8, 18, 32, 18, 31, 2], neut: 187, electronegativity: 1.3, section: "Unknown" },
-  { symbol: "Fl", shells: [2, 8, 18, 32, 18, 32, 2], neut: 190, electronegativity: 1.3, section: "Unknown" },
-  { symbol: "Mc", shells: [2, 8, 18, 32, 18, 33, 2], neut: 193, electronegativity: 1.3, section: "Unknown" },
-  { symbol: "Lv", shells: [2, 8, 18, 32, 18, 34, 2], neut: 195, electronegativity: 1.3, section: "Unknown" },
-  { symbol: "Ts", shells: [2, 8, 18, 32, 18, 35, 2], neut: 197, electronegativity: 2.2, section: "Unknown" },
-  { symbol: "Og", shells: [2, 8, 18, 32, 18, 36, 2], neut: 200, electronegativity: 2.0, section: "Unknown" },
-];
-const metals = ["Alkali metals", "Alkaline earth metals", "Transition metals", "Post-transition metals", "Actinides", "Lanthanides" /* "mettaloids" */];
-
-// More data from CHATGPT
-const extendedorbitals = { P: 10, S: 12, Cl: 12, Xe: 12, As: 10, Se: 12, Br: 12, I: 12, Kr: 12, Sn: 10, Pb: 12, Fe: 12, Co: 12, Ni: 12, Cu: 12 };
 
 let target = null;
 
@@ -282,9 +158,7 @@ function render() {
   }
   for (let e of particles) {
     ctx.font = "25px serif";
-    if (e.charge === -1) ctx.fillText("e-", e.X, e.Y);
-    if (e.charge === 1) ctx.fillText("p", e.X, e.Y);
-    if (e.charge === 0) ctx.fillText("n", e.X, e.Y);
+    ctx.fillText(e.name, e.X, e.Y);
   }
 }
 
@@ -506,12 +380,13 @@ function calculateBonding() {
 }
 // 👷🔨🔧⚙️🛠️🚧✨ in the works... maybe
 class particle {
-  constructor(x, y, vx, vy, charge) {
+  constructor(x, y, vx, vy, charge, name) {
     this.X = x;
     this.Y = y;
     this.vx = vx;
     this.vy = vy;
     this.charge = charge;
+    this.name = name;
   }
 
   update() {
@@ -765,7 +640,7 @@ class atom {
         for (let res of this.fisreact.result) {
           if (res.element === "neutrons") {
             for (let i = 0; i < res.amount; i++) {
-              particles.push(new particle(this.X + 200, this.Y + 200, newran(100) - 50, newran(100) - 50, 0));
+              particles.push(new particle(this.X + 200, this.Y + 200, newran(100) - 50, newran(100) - 50, 0, "n"));
             }
           } else {
             let extrname = res.element.slice(0, res.element.indexOf("-"));
@@ -802,6 +677,7 @@ class atom {
             this.atomn += 1;
             this.elem = data[newelem - 1].symbol;
             this.elec = data[newelem - 1].shells;
+            particles.push(new particle(this.X, this.Y, newran(100) - 50, newran(100) - 50, -1, "e-"));
             //this.charge = 1;
             this.elecneg = data[newelem - 1].electronegativity;
             this.section = data[newelem - 1].section;
@@ -811,6 +687,7 @@ class atom {
             this.atomn += 1;
             this.elem = data[newelem - 1].symbol;
             this.elec = data[newelem - 1].shells;
+            particles.push(new particle(this.X, this.Y, newran(100) - 50, newran(100) - 50, 1, "e+"));
             //this.charge = -1;
             this.elecneg = data[newelem - 1].electronegativity;
             this.section = data[newelem - 1].section;
@@ -889,13 +766,13 @@ document.onmouseup = (event) => {
 function handle() {
   cval = document.querySelector(".inpt").value;
   if (cval === "e-") {
-    particles.push(new particle(100, 1400, 10, -40, -1));
+    particles.push(new particle(100, 1400, 10, -40, -1, "e-"));
   }
   if (cval === "p") {
-    particles.push(new particle(100, 1400, 10, -40, 1));
+    particles.push(new particle(100, 1400, 10, -40, 1, "p"));
   }
   if (cval === "n") {
-    particles.push(new particle(100, 1400, 10, -40, 0));
+    particles.push(new particle(100, 1400, 10, -40, 0, "n"));
   }
   let check = cval;
   if (check.includes("-")) {
