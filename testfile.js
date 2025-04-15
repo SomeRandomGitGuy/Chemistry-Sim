@@ -15,6 +15,8 @@ ctx.fillStyle = "black";
 
 let cval = "";
 
+let nextAtomID = 1;
+
 // Data from CHATGPT
 
 let target = null;
@@ -23,7 +25,7 @@ let mouse = [];
 
 let mousedown = false;
 
-let atoms = [];
+let atoms = {};
 
 let particles = [];
 
@@ -44,114 +46,139 @@ function drawcirc(posx, posy, rad) {
 }
 
 function saveAll() {
-  return JSON.stringify(atoms.concat(particles));
+  console.log(atoms);
+  return JSON.stringify(atoms);
 }
+
+function loadAll(whattoparse) {
+  atoms = {};
+  ta = JSON.parse(whattoparse);
+  for (let i in ta) {
+    let qa = ta[i];
+    atoms[ta[i].ID] = new atom(ta[i].elem, ta[i].X, ta[i].Y, ta[i].elec);
+    atoms[qa.ID].charge = qa.charge;
+    atoms[qa.ID].atomn = qa.atomn;
+    atoms[qa.ID].elecneg = qa.elecneg;
+    atoms[qa.ID].neutrons = qa.neutrons;
+    atoms[qa.ID].section = qa.section;
+    atoms[qa.ID].vx = qa.vx;
+    atoms[qa.ID].vy = qa.vy;
+    atoms[qa.ID].bonds = qa.bonds;
+    atoms[qa.ID].cobonds = qa.cobonds;
+    atoms[qa.ID].cshared = qa.cshared;
+    atoms[qa.ID].mbonds = qa.mbonds;
+    console.log(atoms[ta[i].ID]);
+  }
+}
+
+// "1":{"ID":1,"pos":[],"X":936.7025208272756,"Y":1159.459210901802,"elem":"O","elec":[2,6],"charge":0,"atomn":8,"elecneg":3.44,"neutrons":8,"section":"Nonmetals","valence":6,"vx":1.7507068497529557,"vy":-6.511651189291423,"bonds":[],"mbonds":[],"cobonds":[],"cshared":[]}
 
 function render() {
   counter++;
 
   ctx.clearRect(0, 0, canv.width, canv.height);
-  for (let a of atoms) {
+  for (let a in atoms) {
     ctx.scale(0.98, 0.98);
     ctx.font = "20px serif";
+    let newatom = atoms[a];
 
     ctx.beginPath();
-    ctx.arc(a.X + 9 * a.elem.length, a.Y - 12, 40, 0, Math.PI * 2, true);
+    ctx.arc(newatom.X + 9 * newatom.elem.length, newatom.Y - 12, 40, 0, Math.PI * 2, true);
     ctx.fillStyle = "white";
     ctx.fill();
     ctx.fillStyle = "black";
 
     ctx.font = "30px serif";
-    ctx.fillText(a.elem, a.X, a.Y);
+    ctx.fillText(newatom.elem, newatom.X, newatom.Y);
     ctx.font = "18px serif";
-    ctx.fillText(a.neutrons + a.atomn, a.X - 25, a.Y - 15);
+    ctx.fillText(newatom.neutrons + newatom.atomn, newatom.X - 25, newatom.Y - 15);
     ctx.font = "20px serif";
-    ctx.fillText(a.elec.join(","), a.X + 2, a.Y + 20);
+    ctx.fillText(newatom.elec.join(","), newatom.X + 2, newatom.Y + 20);
 
     //ctx.globalCompositeOperation = "destination-over";
 
-    let repeats = a.elec.length;
-    if (a.mbonds.length > 0) {
+    let repeats = newatom.elec.length;
+    if (newatom.mbonds.length > 0) {
       repeats -= 1;
     }
     for (let l = 0; l < repeats; l++) {
-      if (a.elec[0] === 0) {
+      if (newatom.elec[0] === 0) {
         break;
       }
-      if (a.mbonds.length > 0) {
+      if (newatom.mbonds.length > 0) {
         ctx.save();
         ctx.strokeStyle = "rgb(84 133 255 / 8%)";
         ctx.lineWidth = 25;
-        drawcirc(a.X + 18, a.Y - 2, 15 * (l + 1) + 40);
+        drawcirc(newatom.X + 18, newatom.Y - 2, 15 * (l + 1) + 40);
         ctx.restore();
       }
-      drawcirc(a.X + 18, a.Y - 2, 15 * (l + 1) + 40);
-      for (let i = 0; i < 360; i += 360 / a.elec[l]) {
+      drawcirc(newatom.X + 18, newatom.Y - 2, 15 * (l + 1) + 40);
+      for (let i = 0; i < 360; i += 360 / newatom.elec[l]) {
         let turn = toradian(i + (counter * 2) / (l + 3));
-        let pos = circleification(a.X + 15, a.Y - 1, 15 * (l + 1) + 40, turn);
+        let pos = circleification(newatom.X + 15, newatom.Y - 1, 15 * (l + 1) + 40, turn);
 
         ctx.fillText("x", pos[0], pos[1]);
       }
     }
     //ctx.globalCompositeOperation = "source-over";
     ctx.font = "70px serif";
-    if (a.bonds.length > 0) {
-      for (let b of a.bonds) {
+    if (newatom.bonds.length > 0) {
+      for (let b of newatom.bonds) {
         ctx.beginPath();
-        ctx.moveTo(a.X + 28, a.Y);
-        ctx.lineTo(b.X + 28, b.Y);
+        ctx.moveTo(newatom.X + 28, newatom.Y);
+        ctx.lineTo(atoms[b].X + 28, atoms[b].Y);
         ctx.stroke();
       }
     }
-    if (a.cobonds.length > 0) {
-      for (let b of a.cobonds) {
+    if (newatom.cobonds.length > 0) {
+      for (let b of newatom.cobonds) {
         ctx.save();
 
-        if (a.cshared[a.cobonds.indexOf(b)] === 2) {
+        if (newatom.cshared[newatom.cobonds.indexOf(b.ID)] === 2) {
           ctx.lineWidth = 2;
           ctx.globalAlpha = 0.5;
         }
-        if (a.cshared[a.cobonds.indexOf(b)] === 3) {
+        if (newatom.cshared[newatom.cobonds.indexOf(b.ID)] === 3) {
           ctx.lineWidth = 4;
           ctx.globalAlpha = 0.2;
         }
         ctx.beginPath();
-        ctx.moveTo(a.X + 28, a.Y);
-        ctx.lineTo(b.X + 28, b.Y);
+        ctx.moveTo(newatom.X + 28, newatom.Y);
+        ctx.lineTo(atoms[b].X + 28, atoms[b].Y);
         ctx.stroke();
         ctx.restore();
       }
     }
-    if (a.mbonds.length > 0) {
+    if (newatom.mbonds.length > 0) {
       ctx.globalAlpha = 0.4;
-      for (let b of a.mbonds) {
+      for (let b of newatom.mbonds) {
         ctx.beginPath();
-        ctx.moveTo(a.X + 28, a.Y);
-        ctx.lineTo(b.X + 28, b.Y);
+        ctx.moveTo(newatom.X + 28, newatom.Y);
+        ctx.lineTo(atoms[b].X + 28, atoms[b].Y);
         ctx.stroke();
       }
       ctx.globalAlpha = 1;
     }
 
     let total = 0;
-    for (let temp of a.cshared) {
+    for (let temp of newatom.cshared) {
       total += temp;
     }
-    let av = a.elec[a.elec.length - 1];
-    let abondgoals = a.elem != "H" && a.elem != "He" ? 8 - av : 2 - av;
+    let av = newatom.elec[newatom.elec.length - 1];
+    let abondgoals = newatom.elem != "H" && newatom.elem != "He" ? 8 - av : 2 - av;
     let goal2 = -20;
-    if (extendedorbitals[a.elem] > 0) {
-      goal2 = extendedorbitals[a.elem] - av - total;
+    if (extendedorbitals[newatom.elem] > 0) {
+      goal2 = extendedorbitals[newatom.elem] - av - total;
     }
-    if (abondgoals - total != 0 && goal2 != 0 && a.cobonds.length != 0) {
+    if (abondgoals - total != 0 && goal2 != 0 && newatom.cobonds.length != 0) {
       ctx.fillStyle = "red";
       ctx.font = "15px serif";
-      ctx.fillText("unstable bond", a.X - 8, a.Y + 28);
+      ctx.fillText("unstable bond", newatom.X - 8, newatom.Y + 28);
     }
     ctx.font = "20px serif";
     ctx.fillStyle = "black";
-    if (a.charge > 0) ctx.fillText("+" + a.charge, a.X + 2, a.Y - 25);
-    if (a.charge < 0) ctx.fillText(a.charge, a.X + 2, a.Y - 25);
+    if (newatom.charge > 0) ctx.fillText("+" + newatom.charge, newatom.X + 2, newatom.Y - 25);
+    if (newatom.charge < 0) ctx.fillText(newatom.charge, newatom.X + 2, newatom.Y - 25);
 
     ctx.font = "70px serif";
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -180,7 +207,8 @@ function iterate() {
   let flag1 = performance.now();
   let bound = canv.getBoundingClientRect();
   if (mousedown && target === null) {
-    for (let a of atoms) {
+    for (let b in atoms) {
+      let a = atoms[b];
       if (dist(a.X, a.Y, mouse.x, mouse.y) < 60) {
         target = a;
         // console.log(`${a.elem}: ${a.X} ${a.Y}`);
@@ -196,7 +224,8 @@ function iterate() {
 
   calculateBonding();
 
-  for (let o of atoms) {
+  for (let m in atoms) {
+    let o = atoms[m];
     o.update();
   }
   for (let e of particles) {
@@ -217,7 +246,8 @@ function clamp(n1, n2) {
 
 function findTouching(ix, iy, exclude) {
   let list = [];
-  for (let f of atoms) {
+  for (let e in atoms) {
+    let f = atoms[e];
     // Check if the atoms are close, not the same atom, and have not already bonded
     if (dist(ix, iy, f.X, f.Y) < 180 && f != exclude) {
       list.push(f);
@@ -227,7 +257,8 @@ function findTouching(ix, iy, exclude) {
 }
 
 function calculateBonding() {
-  for (let a of atoms) {
+  for (let b in atoms) {
+    let a = atoms[b];
     let touching = findTouching(a.X, a.Y, a);
     for (let t of touching) {
       let av = a.elec[a.elec.length - 1];
@@ -239,15 +270,15 @@ function calculateBonding() {
 
       if (Math.abs(a.elecneg - t.elecneg) > 1.7 || (metals.includes(a.section) && metals.includes(t.section) === false)) {
         if (a.charge === 0 && t.charge === 0) {
-          if (av / (8 - tv) === 1 && a.bonds.includes(t) === false) {
+          if (av / (8 - tv) === 1 && a.bonds.includes(t.ID) === false) {
             // 1:1 ratio, quick bond
             a.elec.pop();
             a.charge = av;
             t.elec[t.elec.length - 1] = 8;
             t.charge = -1 * (8 - tv);
-            a.bonds.push(t);
-            t.bonds.push(a);
-          } else if (av / (8 - tv) > 1 && a.bonds.includes(t) === false) {
+            a.bonds.push(t.ID);
+            t.bonds.push(a.ID);
+          } else if (av / (8 - tv) > 1 && a.bonds.includes(t.ID) === false) {
             let amount = 1;
             for (let p of touching) {
               if (p.elem === t.elem && p != t) {
@@ -260,23 +291,23 @@ function calculateBonding() {
               a.charge = av;
               t.elec[t.elec.length - 1] = 8;
               t.charge = -1 * (8 - tv);
-              a.bonds.push(t);
-              t.bonds.push(a);
+              a.bonds.push(t.ID);
+              t.bonds.push(a.ID);
               let added = 1;
               for (let p of touching) {
-                if (p.elem === t.elem && p != t && added <= av / (8 - tv) && a.bonds.includes(p) === false) {
+                if (p.elem === t.elem && p != t && added <= av / (8 - tv) && a.bonds.includes(p.ID) === false) {
                   p.elec[p.elec.length - 1] = 8;
                   p.charge = -1 * (8 - tv);
-                  a.bonds.push(p);
-                  p.bonds.push(a);
+                  a.bonds.push(p.ID);
+                  p.bonds.push(a.ID);
                 }
               }
             }
           }
-        } else if (a.charge / Math.abs(t.charge) === 1 && a.charge != 0 && t.charge != 0 && a.charge > 0 && a.bonds.includes(t) === false) {
-          a.bonds.push(t);
-          t.bonds.push(a);
-        } else if (a.charge / Math.abs(t.charge) > 1 && a.charge != 0 && t.charge != 0 && a.charge > 0 && a.bonds.includes(t) === false) {
+        } else if (a.charge / Math.abs(t.charge) === 1 && a.charge != 0 && t.charge != 0 && a.charge > 0 && a.bonds.includes(t.ID) === false) {
+          a.bonds.push(t.ID);
+          t.bonds.push(a.ID);
+        } else if (a.charge / Math.abs(t.charge) > 1 && a.charge != 0 && t.charge != 0 && a.charge > 0 && a.bonds.includes(t.ID) === false) {
           let amount = 1;
           for (let p of touching) {
             if (p.elem === t.elem && p != t && p.charge != 0) {
@@ -285,13 +316,13 @@ function calculateBonding() {
           }
 
           if (amount >= a.charge / Math.abs(t.charge)) {
-            a.bonds.push(t);
-            t.bonds.push(a);
+            a.bonds.push(t.ID);
+            t.bonds.push(a.ID);
             let added = 1;
             for (let p of touching) {
-              if (p.elem === t.elem && p != t && added <= a.charge / Math.abs(t.charge) && p.charge != 0 && a.bonds.includes(t) === false) {
-                a.bonds.push(p);
-                p.bonds.push(a);
+              if (p.elem === t.elem && p != t && added <= a.charge / Math.abs(t.charge) && p.charge != 0 && a.bonds.includes(t.ID) === false) {
+                a.bonds.push(p.ID);
+                p.bonds.push(a.ID);
               }
             }
           }
@@ -302,8 +333,8 @@ function calculateBonding() {
         metals.includes(t.section) === false &&
         a.charge === 0 &&
         t.charge === 0 &&
-        a.cobonds.includes(t) === false &&
-        t.cobonds.includes(a) === false &&
+        a.cobonds.includes(t.ID) === false &&
+        t.cobonds.includes(a.ID) === false &&
         a.mbonds.length === 0 &&
         t.mbonds.length === 0 &&
         a.bonds.length === 0 &&
@@ -334,28 +365,28 @@ function calculateBonding() {
           console.log(amissing);
           console.log(tmissing);
           if (amissing === 1 && tmissing === 1) {
-            a.cobonds.push(t);
-            t.cobonds.push(a);
+            a.cobonds.push(t.ID);
+            t.cobonds.push(a.ID);
             a.cshared.push(1);
             t.cshared.push(1);
           } else if (amissing === 2 && tmissing === 2) {
-            a.cobonds.push(t);
-            t.cobonds.push(a);
+            a.cobonds.push(t.ID);
+            t.cobonds.push(a.ID);
             a.cshared.push(2);
             t.cshared.push(2);
           } else if (amissing === 3 && tmissing === 3) {
-            a.cobonds.push(t);
-            t.cobonds.push(a);
+            a.cobonds.push(t.ID);
+            t.cobonds.push(a.ID);
             a.cshared.push(3);
             t.cshared.push(3);
           } else if (amissing % 2 === 0 && tmissing % 2 === 0) {
-            a.cobonds.push(t);
-            t.cobonds.push(a);
+            a.cobonds.push(t.ID);
+            t.cobonds.push(a.ID);
             a.cshared.push(2);
             t.cshared.push(2);
           } else if (amissing != tmissing) {
-            a.cobonds.push(t);
-            t.cobonds.push(a);
+            a.cobonds.push(t.ID);
+            t.cobonds.push(a.ID);
             a.cshared.push(1);
             t.cshared.push(1);
           }
@@ -365,15 +396,15 @@ function calculateBonding() {
         metals.includes(t.section) &&
         a.charge === 0 &&
         t.charge === 0 &&
-        a.mbonds.includes(t) === false &&
-        t.mbonds.includes(a) === false &&
+        a.mbonds.includes(t.ID) === false &&
+        t.mbonds.includes(a.ID) === false &&
         a.bonds.length === 0 &&
         t.bonds.length === 0 &&
         a.cobonds.length === 0 &&
         t.cobonds.length === 0
       ) {
-        a.mbonds.push(t);
-        t.mbonds.push(a);
+        a.mbonds.push(t.ID);
+        t.mbonds.push(a.ID);
       }
     }
   }
@@ -391,11 +422,8 @@ class particle {
 
   update() {
     let cc = 1750;
-    let temp = atoms.concat(particles);
-    for (let a of temp) {
-      if (a === this) {
-        continue;
-      }
+    for (let b in atoms) {
+      let a = atoms[b];
 
       let dx = a.X - this.X;
       let dy = a.Y - this.Y;
@@ -443,7 +471,7 @@ class particle {
 
 function scaleHalfLife(hlf) {
   const mhf = 14050000000;
-  return (Math.log2(hlf + 1) / Math.log2(mhf)) * 15 + 1;
+  return (Math.log2(hlf + 1) / Math.log2(mhf)) * 20000 + 1;
 }
 
 function findAtom(name) {
@@ -474,6 +502,8 @@ function springForce(a, b, strength, length) {
 
 class atom {
   constructor(e, x, y, ele, custom, v1, v2, neut, charge) {
+    this.ID = nextAtomID;
+    nextAtomID++;
     this.pos = [];
     this.X = x;
     this.Y = y;
@@ -493,7 +523,6 @@ class atom {
     }
 
     //console.log(this.atomn);
-    this.valence = ele[ele.length - 1];
     this.vx = 0 + newran(0);
     this.vy = 0 + newran(0);
     this.bonds = [];
@@ -539,22 +568,24 @@ class atom {
 
   update() {
     let myst = 0.1;
-    for (let b of this.bonds) {
+    for (let b1 of this.bonds) {
+      let b = atoms[b1];
       if (dist(this.X, this.Y, b.X, b.Y) > 260) {
         b.vx *= 0.8;
         b.vy *= 0.8;
-        this.bonds.splice(this.bonds.indexOf(b), 1);
-        b.bonds.splice(b.bonds.indexOf(this), 1);
+        this.bonds.splice(this.bonds.indexOf(b1), 1);
+        b.bonds.splice(b.bonds.indexOf(this.ID), 1);
       }
     }
-    for (let b of this.cobonds) {
+    for (let b1 of this.cobonds) {
+      let b = atoms[b1];
       if (dist(this.X, this.Y, b.X, b.Y) > 260 || this.charge != 0) {
         b.vx *= 0.8;
         b.vy *= 0.8;
         this.cshared.splice(this.cobonds.indexOf(b), 1);
-        this.cobonds.splice(this.cobonds.indexOf(b), 1);
+        this.cobonds.splice(this.cobonds.indexOf(b1), 1);
         b.cshared.splice(b.cobonds.indexOf(this), 1);
-        b.cobonds.splice(b.cobonds.indexOf(this), 1);
+        b.cobonds.splice(b.cobonds.indexOf(this.ID), 1);
       }
       let dx = b.X - this.X;
       let dy = b.Y - this.Y;
@@ -575,10 +606,11 @@ class atom {
       b.vx = b.vx + -fx * myst;
       b.vy = b.vy + -fy * myst;
     }
-    for (let m of this.mbonds) {
+    for (let m1 of this.mbonds) {
+      let m = atoms[m1];
       if (dist(this.X, this.Y, m.X, m.Y) > 200 || this.charge != 0) {
-        this.mbonds.splice(this.mbonds.indexOf(m), 1);
-        m.mbonds.splice(m.mbonds.indexOf(this), 1);
+        this.mbonds.splice(this.mbonds.indexOf(m1), 1);
+        m.mbonds.splice(m.mbonds.indexOf(this.ID), 1);
       }
       let forces = springForce(this, m, 0.2, 150);
       this.vx = this.vx + forces[0] * myst;
@@ -587,8 +619,9 @@ class atom {
       m.vy = m.vy + forces[1] * -myst;
     }
     //console.log(this);
-    for (let a of atoms) {
-      if (a === this || target === a || this === target || this.cobonds.includes(a) || this.mbonds.includes(a)) {
+    for (let b in atoms) {
+      let a = atoms[b];
+      if (a === this || target === a || this === target || this.cobonds.includes(a.ID) || this.mbonds.includes(a.ID)) {
         continue;
       }
       let dx = a.X - this.X;
@@ -649,12 +682,35 @@ class atom {
             let neutnum = parseInt(extrnumber) - (data.indexOf(findAtom(extrname)) + 1);
             let datause = data[this.atomn - 1];
             for (let i = 0; i < res.amount; i++) {
-              atoms.push(new atom(extrname, this.X + postemp, this.Y, datause.shells, true, postemp / 2, newran(100) - 50, neutnum, 0));
+              atoms[nextAtomID] = new atom(extrname, this.X + postemp, this.Y, datause.shells, true, postemp / 2, newran(100) - 50, neutnum, 0);
             }
             postemp = 170;
           }
         }
-        atoms.splice(atoms.indexOf(this), 1);
+        //atoms.splice(atoms.indexOf(this), 1);
+        for (let b of this.bonds) {
+          for (let a of atoms[b].bonds) {
+            if (a === this.ID) {
+              atoms[b].bonds.splice(atoms[b].bonds.indexOf(this.ID), 1);
+            }
+          }
+        }
+        for (let b of this.cobonds) {
+          for (let a of atoms[b].cobonds) {
+            if (a === this.ID) {
+              atoms[b].cobonds.splice(atoms[b].cobonds.indexOf(this.ID), 1);
+              atoms[b].cshared.splice(atoms[b].cobonds.indexOf(this.ID), 1);
+            }
+          }
+        }
+        for (let b of this.mbonds) {
+          for (let a of atoms[b].mbonds) {
+            if (a === this.ID) {
+              atoms[b].mbonds.splice(atoms[b].mbonds.indexOf(this.ID), 1);
+            }
+          }
+        }
+        delete atoms[this.ID];
         break;
       }
     }
@@ -670,7 +726,7 @@ class atom {
             this.elecneg = data[newelem - 1].electronegativity;
             this.section = data[newelem - 1].section;
             this.neutrons -= 2;
-            atoms.push(new atom("He", this.X + 120, this.Y, [0], true, 0, 0, 2, 2));
+            atoms[nextAtomID] = new atom("He", this.X + 120, this.Y, [0], true, 0, 0, 2, 2);
           } else if (this.decaytype === "beta-") {
             let newelem = this.atomn + 1;
             this.neutrons -= 1;
@@ -743,10 +799,12 @@ for (let oshan = 0; oshan < 15; oshan++) {
 }
 */
 
-for (let oshan = 0; oshan < 30; oshan++) {
-  atoms.push(new atom("Na", newran(window.innerWidth * 2), newran(1500), [2, 8, 1]));
-  atoms.push(new atom("Cl", newran(window.innerWidth * 2), newran(1500), [2, 8, 7]));
-}
+// for (let oshan = 0; oshan < 30; oshan++) {
+//   atoms[nextAtomID] = new atom("Na", newran(window.innerWidth * 2), newran(1500), [2, 8, 1]);
+//   atoms[nextAtomID] = new atom("Cl", newran(window.innerWidth * 2), newran(1500), [2, 8, 7]);
+// }
+
+console.log(atoms);
 
 //atoms.push(new atom("Gr", newran(window.innerWidth * 2), newran(1500), [2, 8, 18, 32, 50, 72, 98], true));
 
@@ -782,10 +840,12 @@ function handle() {
     if (t.symbol === check) {
       if (cval.includes("-")) {
         let newneut = parseInt(cval.slice(cval.indexOf("-") + 1)) - (data.indexOf(t) + 1);
-        atoms.push(new atom(t.symbol, 100, 1400, t.shells.slice(), true, 10, -40, newneut, 0));
+        atoms[nextAtomID.toString()] = new atom(t.symbol, 100, 1400, t.shells.slice(), true, 10, -40, newneut, 0);
+
         return;
       }
-      atoms.push(new atom(t.symbol, 100, 1400, t.shells.slice(), true, 10, -40, t.neut, 0));
+      atoms[nextAtomID.toString()] = new atom(t.symbol, 100, 1400, t.shells.slice(), true, 10, -40, t.neut, 0);
+      console.log(nextAtomID);
       return;
     }
   }
