@@ -80,9 +80,11 @@ body {
 .sett {
     position: absolute;
     width: 50%;
-    height: 50%;
-    top: 25%;
+    height: 52%;
+    top: 24%;
     left: 25%;
+    min-height: 390px;
+    min-width: 480px;
     opacity: 0;
     background-color: slategrey;
     transition: all, 0.4s;
@@ -106,17 +108,18 @@ li {
 }
 
 .list2 {
-    padding-right: 30%;
+    padding-right: 26%;
 }
 
 .settext {
     position: relative;
     left: 20px;
+    margin-bottom: 0;
 }
 
 .warn {
     position: relative;
-    bottom: -10px;
+    bottom: 20px;
     left: 20px;
 }
 
