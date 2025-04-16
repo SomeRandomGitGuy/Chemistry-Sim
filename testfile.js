@@ -1,4 +1,4 @@
-//
+// Chemistry!
 
 function newran(input) {
   return Math.floor(Math.random() * input);
@@ -68,12 +68,14 @@ function saveAll() {
   );
 }
 
-function loadAll(whattoparse) {
+function loadAll() {
   atoms = {};
-  ta = JSON.parse(whattoparse);
+  ta = JSON.parse(document.querySelector(".load").value);
   for (let i in ta) {
     let qa = ta[i];
     atoms[ta[i].ID] = new atom(ta[i].elem, ta[i].X, ta[i].Y, ta[i].elec);
+    atoms[qa.ID].ID = qa.ID;
+    nextAtomID = qa.ID + 1;
     atoms[qa.ID].charge = qa.charge;
     atoms[qa.ID].atomn = qa.atomn;
     atoms[qa.ID].elecneg = qa.elecneg;
