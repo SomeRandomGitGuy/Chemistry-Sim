@@ -92,23 +92,17 @@ body {
 }
 
 .listcontainer {
-    display: flexbox;
+    display: flex;
     justify-content: space-between;
-}
-
-.list1 {
-    width: 100px;
 }
 
 ul {
     list-style-type: none;
     padding-left: 15px;
-    width: auto;
 }
 
 li {
     margin: 10px;
-    max-width: 100px;
 }
 
 .settext {

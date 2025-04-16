@@ -91,6 +91,11 @@ body {
     backdrop-filter: blur(10px);
 }
 
+.listcontainer {
+    display: flex;
+    justify-content: space-between;
+}
+
 ul {
     list-style-type: none;
     padding-left: 15px;
