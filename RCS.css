@@ -93,8 +93,7 @@ body {
 
 .listcontainer {
     display: flex;
-    gap: 5px;
-    align-content: 5px;
+    justify-content: space-between;
 }
 
 ul {
@@ -104,6 +103,10 @@ ul {
 
 li {
     margin: 10px;
+}
+
+.list2 {
+    padding-right: 30%;
 }
 
 .settext {
