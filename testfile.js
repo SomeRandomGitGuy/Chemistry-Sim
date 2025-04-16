@@ -13,9 +13,20 @@ canv.height = rect.height * dpr;
 ctx.font = "70px serif";
 ctx.fillStyle = "black";
 
+navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
+  if (result.state === "granted" || result.state === "prompt") {
+    /* write to the clipboard now */
+  }
+});
+
 let cval = "";
 
 let nextAtomID = 1;
+
+let paused = false;
+let halflifetime = 60;
+
+let permissions = { Raddecay: true, Fission: true, Ion: true, Co: true, Met: true };
 
 // Data from CHATGPT
 
@@ -47,7 +58,14 @@ function drawcirc(posx, posy, rad) {
 
 function saveAll() {
   console.log(atoms);
-  return JSON.stringify(atoms);
+  navigator.clipboard.writeText(JSON.stringify(atoms)).then(
+    () => {
+      /* clipboard successfully set */
+    },
+    () => {
+      /* clipboard write failed */
+    },
+  );
 }
 
 function loadAll(whattoparse) {
@@ -204,6 +222,19 @@ function dist(x1, y1, x2, y2) {
 }
 
 function iterate() {
+  if (paused) {
+    let slide = document.querySelector(".slide");
+    let slidtext = document.querySelector(".slidetext");
+    slidtext.innerHTML = `Max half-life time: ${slide.value}s`;
+    halflifetime = parseInt(slide.value);
+
+    permissions.Raddecay = document.querySelector(".drad").checked;
+    permissions.Fission = document.querySelector(".dfis").checked;
+    permissions.Ion = document.querySelector(".dion").checked;
+    permissions.Co = document.querySelector(".dcov").checked;
+    permissions.Met = document.querySelector(".dmet").checked;
+    return;
+  }
   let flag1 = performance.now();
   let bound = canv.getBoundingClientRect();
   if (mousedown && target === null) {
@@ -233,7 +264,10 @@ function iterate() {
   }
   render();
   let flag2 = performance.now();
-  document.querySelector(".perf1").innerHTML = `render: ${(flag2 - flag1).toString().slice(0, 6)}`;
+  document.querySelector(".perf1").innerHTML = `speed: ${(flag2 - flag1).toString().slice(0, 6)}`;
+  if (flag2 - flag1 > 10) {
+    document.querySelector(".perf1").innerHTML = `speed: ${(flag2 - flag1).toString().slice(0, 6)}⚠️`;
+  }
 }
 
 function clamp(n1, n2) {
@@ -268,7 +302,7 @@ function calculateBonding() {
         continue;
       }
 
-      if (Math.abs(a.elecneg - t.elecneg) > 1.7 || (metals.includes(a.section) && metals.includes(t.section) === false)) {
+      if ((Math.abs(a.elecneg - t.elecneg) > 1.7 || (metals.includes(a.section) && metals.includes(t.section) === false)) && a.atomn < 36 && t.atomn < 36 && permissions.Ion) {
         if (a.charge === 0 && t.charge === 0) {
           if (av / (8 - tv) === 1 && a.bonds.includes(t.ID) === false) {
             // 1:1 ratio, quick bond
@@ -340,7 +374,8 @@ function calculateBonding() {
         a.bonds.length === 0 &&
         t.bonds.length === 0 &&
         a.section != "Noble gases" &&
-        t.section != "Noble gases"
+        t.section != "Noble gases" &&
+        permissions.Co
       ) {
         let abondgoals = a.elem != "H" && a.elem != "He" ? 8 - av : 2 - av;
         let tbondgoals = t.elem != "H" && t.elem != "He" ? 8 - tv : 2 - av;
@@ -401,7 +436,8 @@ function calculateBonding() {
         a.bonds.length === 0 &&
         t.bonds.length === 0 &&
         a.cobonds.length === 0 &&
-        t.cobonds.length === 0
+        t.cobonds.length === 0 &&
+        permissions.Met
       ) {
         a.mbonds.push(t.ID);
         t.mbonds.push(a.ID);
@@ -471,7 +507,7 @@ class particle {
 
 function scaleHalfLife(hlf) {
   const mhf = 14050000000;
-  return (Math.log2(hlf + 1) / Math.log2(mhf)) * 20000 + 1;
+  return (Math.log2(hlf + 1) / Math.log2(mhf)) * halflifetime + 1;
 }
 
 function findAtom(name) {
@@ -582,9 +618,9 @@ class atom {
       if (dist(this.X, this.Y, b.X, b.Y) > 260 || this.charge != 0) {
         b.vx *= 0.8;
         b.vy *= 0.8;
-        this.cshared.splice(this.cobonds.indexOf(b), 1);
+        this.cshared.splice(this.cobonds.indexOf(b1), 1);
         this.cobonds.splice(this.cobonds.indexOf(b1), 1);
-        b.cshared.splice(b.cobonds.indexOf(this), 1);
+        b.cshared.splice(b.cobonds.indexOf(this.ID), 1);
         b.cobonds.splice(b.cobonds.indexOf(this.ID), 1);
       }
       let dx = b.X - this.X;
@@ -668,7 +704,7 @@ class atom {
     }
 
     for (let p of particles) {
-      if (dist(this.X, this.Y, p.X, p.Y) < 190 && p.charge === 0 && this.fissionable === true) {
+      if (dist(this.X, this.Y, p.X, p.Y) < 190 && p.charge === 0 && this.fissionable === true && permissions.Fission) {
         let postemp = -170;
         for (let res of this.fisreact.result) {
           if (res.element === "neutrons") {
@@ -715,7 +751,7 @@ class atom {
       }
     }
 
-    if (counter % 20) {
+    if (counter % 20 && permissions.Raddecay) {
       if (this.hasOwnProperty("nextLifeCheck")) {
         if (Date.now() > this.nextLifeCheck && newran(2) === 1) {
           if (this.decaytype === "alpha") {
@@ -856,8 +892,25 @@ function clearall() {
   particles = [];
 }
 
+function settings() {
+  let setbox = document.querySelector(".sett");
+  let imgbox = document.querySelector(".setb");
+
+  if (document.querySelector(".setb").classList.contains("imgclicked")) {
+    imgbox.classList.remove("imgclicked");
+    setbox.style.visibility = "hidden";
+    paused = false;
+    setbox.style.opacity = 0;
+  } else {
+    imgbox.classList.add("imgclicked");
+    paused = true;
+    setbox.style.visibility = "visible";
+    setbox.style.opacity = 0.9;
+  }
+}
 document.querySelector(".btn").onclick = handle;
 document.querySelector(".btn2").onclick = clearall;
+document.querySelector(".setb").onclick = settings;
 
 render();
 

@@ -204,7 +204,7 @@ function iterate() {
   }
   render();
   let flag2 = performance.now();
-  document.querySelector(".perf1").innerHTML = `render: ${(flag2 - flag1).toString().slice(0, 6)}`;
+  document.querySelector(".perf1").innerHTML = `speed: ${(flag2 - flag1).toString().slice(0, 6)}`;
 }
 
 function clamp(n1, n2) {

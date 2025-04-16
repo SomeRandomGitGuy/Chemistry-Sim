@@ -10,7 +10,7 @@ canvas {
     transform3d: translate(0, 0, 0);
 }
 
-h1 {
+.title {
     position: absolute;
     top: -5px;
     font-size: 20px;
@@ -60,8 +60,55 @@ body {
 }
 .perf1 {
     position: absolute;
-    left: 88%;
+    left: 84%;
     top: 95%;
+}
+
+.setb {
+    position: absolute;
+    width: 50px;
+    left: 96%;
+    top: 94%;
+    transition: all, 0.5s;
+}
+
+.imgclicked {
+    transition: rotate, 0.5s;
+    transform: rotate(90deg);
+}
+
+.sett {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 25%;
+    left: 25%;
+    opacity: 0;
+    background-color: slategrey;
+    transition: all, 0.4s;
+    border-radius: 30px;
+    box-shadow: 0px 20px 10px black;
+    backdrop-filter: blur(10px);
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 15px;
+}
+
+li {
+    margin: 10px;
+}
+
+.settext {
+    position: relative;
+    left: 20px;
+}
+
+.warn {
+    position: relative;
+    bottom: -70px;
+    left: 20px;
 }
 
 .bar {
