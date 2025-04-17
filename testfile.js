@@ -927,7 +927,7 @@ function settings() {
     imgbox.classList.add("imgclicked");
     paused = true;
     setbox.style.visibility = "visible";
-    setbox.style.opacity = 0.9;
+    setbox.style.opacity = 0.95;
   }
 }
 document.querySelector(".btn").onclick = handle;
