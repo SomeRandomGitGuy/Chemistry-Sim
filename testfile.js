@@ -52,6 +52,14 @@ function toradian(degree) {
   return degree * (Math.PI / 180);
 }
 
+function findPerpendicularPoint(x1, y1, x2, y2, len) {
+  let result = { x: 0, y: 0 };
+  let d = dist(x1, y1, x2, y2);
+  result.x = x1 + len * ((y2 - y1) / d);
+  result.y = y1 - len * ((x2 - x1) / d);
+  return result;
+}
+
 function drawcirc(posx, posy, rad) {
   ctx.beginPath();
   ctx.arc(posx, posy, rad, 0, Math.PI * 2, true);
@@ -79,12 +87,20 @@ function localLoad() {
   ta = JSON.parse(localStorage.getItem(savefilechoice.value));
   console.log(ta);
   classify(ta);
+  // Render the loaded atoms
+  paused = false;
+  iterate();
+  paused = true;
 }
 
 function loadAll() {
   atoms = {};
   ta = JSON.parse(document.querySelector(".load").value);
   classify(ta);
+  // Render the loaded atoms
+  paused = false;
+  iterate();
+  paused = true;
 }
 
 function classify(ta) {
@@ -174,18 +190,33 @@ function render() {
       for (let b of newatom.cobonds) {
         ctx.save();
 
-        if (newatom.cshared[newatom.cobonds.indexOf(b.ID)] === 2) {
-          ctx.lineWidth = 2;
-          ctx.globalAlpha = 0.5;
+        if (newatom.cshared[newatom.cobonds.indexOf(b)] > 1) {
+          let p1 = findPerpendicularPoint(newatom.X + 14, newatom.Y, atoms[b].X, atoms[b].Y, 5);
+          let p2 = findPerpendicularPoint(newatom.X + 14, newatom.Y, atoms[b].X, atoms[b].Y, -5);
+          let p3 = findPerpendicularPoint(atoms[b].X + 14, atoms[b].Y, newatom.X, newatom.Y, 5);
+          let p4 = findPerpendicularPoint(atoms[b].X + 14, atoms[b].Y, newatom.X, newatom.Y, -5);
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p4.x, p4.y);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(p2.x, p2.y);
+          ctx.lineTo(p3.x, p3.y);
+          ctx.stroke();
+          if (newatom.cshared[newatom.cobonds.indexOf(b)] === 3) {
+            ctx.beginPath();
+            ctx.moveTo(newatom.X + 28, newatom.Y);
+            ctx.lineTo(atoms[b].X + 28, atoms[b].Y);
+            ctx.stroke();
+            ctx.restore();
+          }
+        } else {
+          ctx.beginPath();
+          ctx.moveTo(newatom.X + 28, newatom.Y);
+          ctx.lineTo(atoms[b].X + 28, atoms[b].Y);
+          ctx.stroke();
+          ctx.restore();
         }
-        if (newatom.cshared[newatom.cobonds.indexOf(b.ID)] === 3) {
-          ctx.lineWidth = 4;
-          ctx.globalAlpha = 0.2;
-        }
-        ctx.beginPath();
-        ctx.moveTo(newatom.X + 28, newatom.Y);
-        ctx.lineTo(atoms[b].X + 28, atoms[b].Y);
-        ctx.stroke();
         ctx.restore();
       }
     }
@@ -817,7 +848,9 @@ class atom {
 
     let damp = 0.999;
     if (document.querySelector(".chck").checked === true) {
-      damp = 0.8;
+      damp = 0.9;
+    } else if (document.querySelector(".heat").checked === true) {
+      damp = 1.005;
     }
     this.vx *= damp;
     this.vy *= damp;
@@ -833,13 +866,21 @@ class atom {
     if (this.Y > window.innerHeight * 2 || this.Y < 100) {
       this.vy *= -1;
     }
-    if (this.X > window.innerWidth * 2 + 10 || this.X < 1 - 10) {
+    if (this.X > window.innerWidth * 2 + 10) {
       this.X = 0;
-      this.vx = 0;
+      this.vx *= 0.8;
     }
-    if (this.Y > window.innerHeight * 2 + 10 || this.Y < 100 - 10) {
+    if (this.X < 1 - 10) {
+      this.X = window.innerWidth * 2;
+      this.vx *= 0.8;
+    }
+    if (this.Y > window.innerHeight * 2 + 10) {
       this.Y = 105;
-      this.vy = 0;
+      this.vy *= 0.8;
+    }
+    if (this.Y < 100 - 10) {
+      this.Y = window.innerHeight * 2;
+      this.vy *= 0.8;
     }
   }
 }
@@ -910,7 +951,7 @@ function handle() {
 }
 
 function clearall() {
-  atoms = [];
+  atoms = {};
   particles = [];
 }
 
