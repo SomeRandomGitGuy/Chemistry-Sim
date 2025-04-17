@@ -32,6 +32,8 @@ ChatGPT was used for:
 - Metallic bonding
   - Also uses spring physics
 - Expanded octets for Covalent bonding
+- Radioactive decay for speicifc radio-isotopes
+- Fission
 
 **Possibly upcoming features**
 
