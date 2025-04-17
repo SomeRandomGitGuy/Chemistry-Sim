@@ -42,6 +42,8 @@ let particles = [];
 
 let counter = 0;
 
+let savefilechoice = document.querySelector(".savefile");
+
 function circleification(px, py, r, ang) {
   return [px + r * Math.cos(ang), py + r * Math.sin(ang)];
 }
@@ -68,10 +70,28 @@ function saveAll() {
   );
 }
 
+function localSave() {
+  localStorage.setItem(savefilechoice.value, JSON.stringify(atoms));
+}
+
+function localLoad() {
+  atoms = {};
+  ta = JSON.parse(localStorage.getItem(savefilechoice.value));
+  console.log(ta);
+  classify(ta);
+}
+
 function loadAll() {
   atoms = {};
   ta = JSON.parse(document.querySelector(".load").value);
+  classify(ta);
+}
+
+function classify(ta) {
   for (let i in ta) {
+    if (ta[i] === null) {
+      continue;
+    }
     let qa = ta[i];
     atoms[ta[i].ID] = new atom(ta[i].elem, ta[i].X, ta[i].Y, ta[i].elec);
     atoms[qa.ID].ID = qa.ID;
