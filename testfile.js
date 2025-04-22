@@ -40,6 +40,46 @@ let atoms = {};
 
 let particles = [];
 
+let effects = [];
+
+class effect {
+  constructor(x, y, l, s, type) {
+    this.X = x;
+    this.Y = y;
+    this.life = l;
+    this.slife = l;
+    this.size = s;
+    this.type = type;
+  }
+  update() {
+    this.life -= 1;
+    if (this.life < 0) {
+      effects.splice(effects.indexOf(this), 1);
+      return;
+    }
+    if (this.type === 1) {
+      ctx.save();
+      ctx.beginPath();
+
+      let topercent = this.life / (this.slife / 100);
+      ctx.fillStyle = `rgb(255 180 0 / ${topercent}%)`;
+      let rad = this.slife - this.life;
+      console.log(rad);
+      ctx.arc(this.X, this.Y, rad, 0, Math.PI * 2, true);
+      ctx.fill();
+      for (let i = 2; i < 4; i += 1) {
+        ctx.beginPath();
+        ctx.fillStyle = `rgb(255 ${255 - i * 60} 0 / ${topercent}%)`;
+        ctx.arc(this.X, this.Y, rad / i, 0, Math.PI * 2, true);
+        ctx.fill();
+      }
+      ctx.restore();
+    } else {
+      // more effects
+    }
+  }
+}
+
 let counter = 0;
 
 let savefilechoice = document.querySelector(".savefile");
@@ -290,7 +330,7 @@ function iterate() {
   }
   let flag1 = performance.now();
   let bound = canv.getBoundingClientRect();
-  if (mousedown && target === null) {
+  if (mousedown && target === null && mouse.y ) {
     for (let b in atoms) {
       let a = atoms[b];
       if (dist(a.X, a.Y, mouse.x, mouse.y) < 60) {
@@ -316,6 +356,10 @@ function iterate() {
     e.update();
   }
   render();
+
+  for (let e of effects) {
+    e.update();
+  }
   let flag2 = performance.now();
   document.querySelector(".perf1").innerHTML = `speed: ${(flag2 - flag1).toString().slice(0, 6)}`;
   if (flag2 - flag1 > 10) {
@@ -725,7 +769,6 @@ class atom {
       let cx = 0;
       let cy = 0;
 
-      let damp = 0.9999;
       if (dis < 5 || dis > 1000) {
         continue;
       }
@@ -777,6 +820,7 @@ class atom {
           }
         }
         //atoms.splice(atoms.indexOf(this), 1);
+        effects.push(new effect(this.X, this.Y, 100, 1, 1));
         for (let b of this.bonds) {
           for (let a of atoms[b].bonds) {
             if (a === this.ID) {
@@ -815,6 +859,7 @@ class atom {
             this.elecneg = data[newelem - 1].electronegativity;
             this.section = data[newelem - 1].section;
             this.neutrons -= 2;
+            effects.push(new effect(this.X, this.Y, 20, 1, 1));
             atoms[nextAtomID] = new atom("He", this.X + 120, this.Y, [0], true, 0, 0, 2, 2);
           } else if (this.decaytype === "beta-") {
             let newelem = this.atomn + 1;
@@ -826,6 +871,7 @@ class atom {
             //this.charge = 1;
             this.elecneg = data[newelem - 1].electronegativity;
             this.section = data[newelem - 1].section;
+            effects.push(new effect(this.X, this.Y, 50, 1, 1));
           } else if (this.decaytype === "beta+") {
             let newelem = this.atomn - 1;
             this.neutrons += 1;
@@ -836,6 +882,7 @@ class atom {
             //this.charge = -1;
             this.elecneg = data[newelem - 1].electronegativity;
             this.section = data[newelem - 1].section;
+            effects.push(new effect(this.X, this.Y, 50, 1, 1));
           }
           delete this.nextLifeCheck;
           this.updateRadioTimer();
@@ -847,11 +894,8 @@ class atom {
     }
 
     let damp = 0.999;
-    if (document.querySelector(".chck").checked === true) {
-      damp = 0.9;
-    } else if (document.querySelector(".heat").checked === true) {
-      damp = 1.005;
-    }
+    damp = document.querySelector(".chck").value;
+    if (Math.sqrt(this.vx ** 2 + this.vy ** 2) > 180 && document.querySelector(".safe").checked) damp = 0.7;
     this.vx *= damp;
     this.vy *= damp;
 
@@ -906,6 +950,8 @@ for (let oshan = 0; oshan < 15; oshan++) {
 console.log(atoms);
 
 //atoms.push(new atom("Gr", newran(window.innerWidth * 2), newran(1500), [2, 8, 18, 32, 50, 72, 98], true));
+
+//effects.push(new effect(100, 100, 150, 50));
 
 document.onmousemove = (event) => {
   mouse.x = (event.clientX - rect.left) * dpr;

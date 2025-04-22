@@ -47,29 +47,45 @@ body {
     height: 20px;
 }
 
+.chck::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 10px;
+    background: black;
+}
+
 .chck {
+    -webkit-appearance: none;
+    -moz-appearance: none;
     position: absolute;
     left: 27%;
     top: 97%;
-}
-
-.heat {
-    position: absolute;
-    left: calc(27% + 120px);
-    top: 97%;
+    background: linear-gradient(
+        to right,
+        #0000ff 14.28%,
+        #00bfff 14.28%,
+        #00bfff 28.58%,
+        #87cefa 28.58%,
+        #87cefa 42.86%,
+        #808080 42.86%,
+        #808080 57.14%,
+        #fffa91 57.14%,
+        #fffa91 71.42%,
+        #ffaa00 71.42%,
+        #ffaa00 85.72%,
+        #ff0000 85.72%,
+        #ff0000 100%
+    );
+    border-radius: 10px;
 }
 
 .slow {
     position: absolute;
-    left: calc(27% + 25px);
+    left: calc(27% + 150px);
     top: 95%;
 }
 
-.fast {
-    position: absolute;
-    left: calc(27% + 140px);
-    top: 95%;
-}
 .perf1 {
     position: absolute;
     left: 84%;
