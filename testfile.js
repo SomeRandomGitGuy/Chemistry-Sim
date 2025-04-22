@@ -106,9 +106,20 @@ function drawcirc(posx, posy, rad) {
   ctx.stroke();
 }
 
+function roundedValues(input) {
+  let temp = input;
+  for (let i in temp) {
+    temp[i].X = Math.floor(temp[i].X);
+    temp[i].Y = Math.floor(temp[i].Y);
+    temp[i].vx = Math.floor(temp[i].vx);
+    temp[i].vy = Math.floor(temp[i].vy);
+  }
+  return temp;
+}
+
 function saveAll() {
   console.log(atoms);
-  navigator.clipboard.writeText(JSON.stringify(atoms)).then(
+  navigator.clipboard.writeText(JSON.stringify(roundedValues(atoms))).then(
     () => {
       /* clipboard successfully set */
     },
@@ -119,7 +130,7 @@ function saveAll() {
 }
 
 function localSave() {
-  localStorage.setItem(savefilechoice.value, JSON.stringify(atoms));
+  localStorage.setItem(savefilechoice.value, JSON.stringify(roundedValues(atoms)));
 }
 
 function localLoad() {
@@ -330,7 +341,7 @@ function iterate() {
   }
   let flag1 = performance.now();
   let bound = canv.getBoundingClientRect();
-  if (mousedown && target === null && mouse.y ) {
+  if (mousedown && target === null && mouse.y) {
     for (let b in atoms) {
       let a = atoms[b];
       if (dist(a.X, a.Y, mouse.x, mouse.y) < 60) {
