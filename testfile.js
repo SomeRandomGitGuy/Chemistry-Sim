@@ -19,6 +19,11 @@ navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
   }
 });
 
+let flag1 = 0;
+let flag2 = 0;
+
+let deltatime = 0;
+
 let cval = "";
 
 let nextAtomID = 1;
@@ -325,6 +330,8 @@ function dist(x1, y1, x2, y2) {
   return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 }
 
+let oldtime = 0;
+
 function iterate() {
   if (paused) {
     let slide = document.querySelector(".slide");
@@ -339,7 +346,9 @@ function iterate() {
     permissions.Met = document.querySelector(".dmet").checked;
     return;
   }
-  let flag1 = performance.now();
+  flag1 = performance.now();
+  deltatime = (Date.now() - oldtime) / 10;
+  oldtime = Date.now();
   let bound = canv.getBoundingClientRect();
   if (mousedown && target === null && mouse.y) {
     for (let b in atoms) {
@@ -371,7 +380,7 @@ function iterate() {
   for (let e of effects) {
     e.update();
   }
-  let flag2 = performance.now();
+  flag2 = performance.now();
   document.querySelector(".perf1").innerHTML = `speed: ${(flag2 - flag1).toString().slice(0, 6)}`;
   if (flag2 - flag1 > 10) {
     document.querySelector(".perf1").innerHTML = `speed: ${(flag2 - flag1).toString().slice(0, 6)}⚠️`;
