@@ -573,6 +573,12 @@ class particle {
       let dy = a.Y - this.Y;
       let dis = dist(this.X, this.Y, a.X, a.Y);
 
+      if (a.elec[0] < 2 && dis < 200) {
+        a.elec[0] += 1;
+        a.charge -= 1;
+        particles.splice(particles.indexOf(this), 1);
+      }
+
       if (dis < 5) {
         continue;
       }
