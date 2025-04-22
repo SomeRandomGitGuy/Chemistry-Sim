@@ -737,24 +737,11 @@ class atom {
         b.cshared.splice(b.cobonds.indexOf(this.ID), 1);
         b.cobonds.splice(b.cobonds.indexOf(this.ID), 1);
       }
-      let dx = b.X - this.X;
-      let dy = b.Y - this.Y;
-      let dis = dist(this.X, this.Y, b.X, b.Y);
-
-      let ux = dx / dis;
-      let uy = dy / dis;
-      let bstrength = 0.3;
-      let blenngth = 130;
-      let damp = 0.4;
-      let force = -bstrength * (dis - blenngth);
-      force *= damp;
-      force *= -1;
-      let fx = force * ux;
-      let fy = force * uy;
-      this.vx = this.vx + fx * myst;
-      this.vy = this.vy + fy * myst;
-      b.vx = b.vx + -fx * myst;
-      b.vy = b.vy + -fy * myst;
+      let forces = springForce(this, b, 0.3, 130);
+      this.vx = this.vx + forces[0] * myst;
+      this.vy = this.vy + forces[1] * myst;
+      b.vx = b.vx + forces[0] * -myst;
+      b.vy = b.vy + forces[1] * -myst;
     }
     for (let m1 of this.mbonds) {
       let m = atoms[m1];
