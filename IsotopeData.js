@@ -133,7 +133,7 @@ const isotopes = {
       result: [
         { element: "H -1", amount: 1 },
         { element: "I -126", amount: 1 },
-        { element: "neutrons", amount: 10 },
+        { element: "neutrons", amount: 50 },
       ],
     },
   },
