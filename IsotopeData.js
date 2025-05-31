@@ -124,6 +124,19 @@ const isotopes = {
   ],
   C: { decay: "beta-", neutrons: 8, halfLife: 5730 },
   I: { decay: "beta-", neutrons: 78, halfLife: 0.0219 },
+  Gtf: {
+    decay: "beta-",
+    neutrons: 13,
+    halfLife: 1313,
+    neutronReaction: {
+      type: "fissile",
+      result: [
+        { element: "H -1", amount: 1 },
+        { element: "I -126", amount: 1 },
+        { element: "neutrons", amount: 10 },
+      ],
+    },
+  },
   Pu: [
     {
       decay: "alpha",

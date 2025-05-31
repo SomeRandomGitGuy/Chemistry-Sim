@@ -69,7 +69,6 @@ class effect {
       let topercent = this.life / (this.slife / 100);
       ctx.fillStyle = `rgb(255 180 0 / ${topercent}%)`;
       let rad = this.slife - this.life;
-      console.log(rad);
       ctx.arc(this.X, this.Y, rad, 0, Math.PI * 2, true);
       ctx.fill();
       for (let i = 2; i < 4; i += 1) {
@@ -353,7 +352,7 @@ function iterate() {
   if (mousedown && target === null && mouse.y) {
     for (let b in atoms) {
       let a = atoms[b];
-      if (dist(a.X, a.Y, mouse.x, mouse.y) < 60) {
+      if (dist(a.X, a.Y, mouse.x, mouse.y) < a.getElecRad()) {
         target = a;
         // console.log(`${a.elem}: ${a.X} ${a.Y}`);
         // console.log(`mouse ${mouse.x} ${mouse.y}`);
@@ -516,6 +515,17 @@ function calculateBonding() {
           console.log(a.elem);
           console.log(amissing);
           console.log(tmissing);
+          // if (Math.abs(a.elecneg - t.elecneg) > 0.4) {
+          //   if (a.elecneg > t.elecneg) {
+          //     a.polarity = abondgoals / -1;
+          //     t.polarity = tbondgoals / 1;
+          //   } else {
+          //     a.polarity = abondgoals / 1;
+          //     t.polarity = tbondgoals / -1;
+          //   }
+          //   a.polarity *= 10;
+          //   t.polarity *= 10;
+          // }
           if (amissing === 1 && tmissing === 1) {
             a.cobonds.push(t.ID);
             t.cobonds.push(a.ID);
@@ -582,7 +592,7 @@ class particle {
       let dy = a.Y - this.Y;
       let dis = dist(this.X, this.Y, a.X, a.Y);
 
-      if (a.elec[0] < 2 && dis < 200) {
+      if (a.elec[0] < 2 && dis < 200 && this.name === "e-" && a.elem === "He") {
         a.elec[0] += 1;
         a.charge -= 1;
         particles.splice(particles.indexOf(this), 1);
@@ -664,6 +674,7 @@ class atom {
     this.ID = nextAtomID;
     nextAtomID++;
     this.pos = [];
+    this.polarity = 0;
     this.X = x;
     this.Y = y;
     this.elem = e;
@@ -696,7 +707,43 @@ class atom {
       this.charge = charge;
     }
 
+    if (this.elem === "Gtf") {
+      this.atomn = 13;
+    }
+
     this.updateRadioTimer();
+  }
+
+  getElecRad() {
+    //15 * (l + 1) + 40
+    let l = this.elec.length;
+    return 15 * (l + 1) + 40;
+  }
+
+  deleteSelf() {
+    for (let b of this.bonds) {
+      for (let a of atoms[b].bonds) {
+        if (a === this.ID) {
+          atoms[b].bonds.splice(atoms[b].bonds.indexOf(this.ID), 1);
+        }
+      }
+    }
+    for (let b of this.cobonds) {
+      for (let a of atoms[b].cobonds) {
+        if (a === this.ID) {
+          atoms[b].cobonds.splice(atoms[b].cobonds.indexOf(this.ID), 1);
+          atoms[b].cshared.splice(atoms[b].cobonds.indexOf(this.ID), 1);
+        }
+      }
+    }
+    for (let b of this.mbonds) {
+      for (let a of atoms[b].mbonds) {
+        if (a === this.ID) {
+          atoms[b].mbonds.splice(atoms[b].mbonds.indexOf(this.ID), 1);
+        }
+      }
+    }
+    delete atoms[this.ID];
   }
 
   updateRadioTimer() {
@@ -719,7 +766,7 @@ class atom {
         console.log(scaleHalfLife(isotopes[this.elem].halfLife));
         if (isotopes[this.elem].hasOwnProperty("neutronReaction")) {
           this.fissionable = true;
-          this.fisreact = rad.neutronReaction;
+          this.fisreact = isotopes[this.elem].neutronReaction;
         }
       }
     }
@@ -786,8 +833,8 @@ class atom {
         continue;
       }
 
-      if (a.charge != 0 || this.charge != 0) {
-        let colum = cc * ((this.charge * a.charge) / (dis * 0.2) ** 2);
+      if (a.charge != 0 || this.charge != 0 || a.polarity != 0 || a.polarity != 0) {
+        let colum = cc * (((this.charge + this.polarity) * (a.charge + a.polarity)) / (dis * 0.2) ** 2);
         colum *= -1;
 
         cx = colum * ux;
@@ -834,29 +881,7 @@ class atom {
         }
         //atoms.splice(atoms.indexOf(this), 1);
         effects.push(new effect(this.X, this.Y, 100, 1, 1));
-        for (let b of this.bonds) {
-          for (let a of atoms[b].bonds) {
-            if (a === this.ID) {
-              atoms[b].bonds.splice(atoms[b].bonds.indexOf(this.ID), 1);
-            }
-          }
-        }
-        for (let b of this.cobonds) {
-          for (let a of atoms[b].cobonds) {
-            if (a === this.ID) {
-              atoms[b].cobonds.splice(atoms[b].cobonds.indexOf(this.ID), 1);
-              atoms[b].cshared.splice(atoms[b].cobonds.indexOf(this.ID), 1);
-            }
-          }
-        }
-        for (let b of this.mbonds) {
-          for (let a of atoms[b].mbonds) {
-            if (a === this.ID) {
-              atoms[b].mbonds.splice(atoms[b].mbonds.indexOf(this.ID), 1);
-            }
-          }
-        }
-        delete atoms[this.ID];
+        this.deleteSelf();
         break;
       }
     }
@@ -924,19 +949,19 @@ class atom {
       this.vy *= -1;
     }
     if (this.X > window.innerWidth * 2 + 10) {
-      this.X = 0;
+      this.X -= 10;
       this.vx *= 0.8;
     }
     if (this.X < 1 - 10) {
-      this.X = window.innerWidth * 2;
+      this.X += 10;
       this.vx *= 0.8;
     }
     if (this.Y > window.innerHeight * 2 + 10) {
-      this.Y = 105;
+      this.Y -= 10;
       this.vy *= 0.8;
     }
     if (this.Y < 100 - 10) {
-      this.Y = window.innerHeight * 2;
+      this.Y += 10;
       this.vy *= 0.8;
     }
   }
@@ -969,13 +994,31 @@ console.log(atoms);
 document.onmousemove = (event) => {
   mouse.x = (event.clientX - rect.left) * dpr;
   mouse.y = (event.clientY - rect.top) * dpr;
+  mouse.vx = event.movementX;
+  mouse.vy = event.movementY;
 };
 
 document.onmousedown = (event) => {
   mousedown = true;
 };
+
+document.addEventListener("keypress", (e) => {
+  if (true) {
+    if (e.key === " ") {
+      for (let b in atoms) {
+        let a = atoms[b];
+        if (dist(a.X, a.Y, mouse.x, mouse.y) < 200) {
+          atoms[b].deleteSelf();
+        }
+      }
+    }
+  }
+});
+
 document.onmouseup = (event) => {
   mousedown = false;
+  target.vx = mouse.vx;
+  target.vy = mouse.vy;
   target = null;
 };
 
@@ -989,6 +1032,9 @@ function handle() {
   }
   if (cval === "n") {
     particles.push(new particle(100, 1400, 10, -40, 0, "n"));
+  }
+  if (cval === "Gtf") {
+    atoms[nextAtomID.toString()] = new atom("Gtf", 100, 1400, [13], true, 10, -40, 13, 0);
   }
   let check = cval;
   if (check.includes("-")) {
