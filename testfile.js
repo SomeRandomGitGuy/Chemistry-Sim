@@ -1011,6 +1011,11 @@ document.addEventListener("keypress", (e) => {
           atoms[b].deleteSelf();
         }
       }
+      for (let a in particles) {
+        if (dist(a.X, a.Y, mouse.x, mouse.y) < 200) {
+          particles.splice(particles.indexOf(a), 1);
+        }
+      }
     }
   }
 });
