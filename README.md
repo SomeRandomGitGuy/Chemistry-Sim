@@ -1,12 +1,6 @@
 # Chemistry-Sim
 
-A Chemistry Simulation written by me, SomeRandomGitGuy
-
-ChatGPT was used for:
-
-- Information on how the chemistry should work
-- Basic rules/formulas to govern the chemistry
-- But no actual code was taken from AI
+A Chemistry Simulation by SomeRandomGitGuy and MKL3D
 
 ## Basic Information
 
@@ -23,7 +17,7 @@ ChatGPT was used for:
 
 ### RCS++
 
-**RCS++.js** is the most recent, and updated version, featuring:
+**RCS++.js** is another old version, featuring:
 
 - Ionic bonding, compatable with multiple of one atom
   - Uses Coloumbs law for bonding physics
@@ -35,7 +29,16 @@ ChatGPT was used for:
 - Radioactive decay for speicifc radio-isotopes
 - Fission
 
-**Possibly upcoming features**
+### testfile
 
-- Light (Electromagnetic spectrum)
-- Some added hard-coded logic for atoms like silicon and their bonding habits
+Confusingly, the new version, featuring:
+
+- Many fixes
+- Theoretical elements
+- Removal of AI slop data
+
+**Upcoming Features**
+
+- Advanced bonding
+- Expanded Radiation table
+- Nuclear Fusion
