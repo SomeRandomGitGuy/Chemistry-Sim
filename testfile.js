@@ -33,8 +33,6 @@ let halflifetime = 60;
 
 let permissions = { Raddecay: true, Fission: true, Ion: true, Co: true, Met: true, Theo: false};
 
-// Data from CHATGPT
-
 let target = null;
 
 let mouse = [];
@@ -590,8 +588,15 @@ class particle {
       let dy = a.Y - this.Y;
       let dis = dist(this.X, this.Y, a.X, a.Y);
 
-      if (a.elec[0] < 2 && dis < 200 && this.name === "e-" && a.elem === "He") {
-        a.elec[0] += 1;
+      /* allow ions to reattach */
+      if (a.charge > 0 && dis < 200 && this.name === "e-") {
+        let shells = undefined;
+
+        if (data[a.atomn - 1].shells.length > a.elec.length) {
+          a.elec.push(1);
+        } else {
+          a.elec[a.elec.length - 1] += 1;
+        }
         a.charge -= 1;
         particles.splice(particles.indexOf(this), 1);
       }
