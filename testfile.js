@@ -31,9 +31,7 @@ let nextAtomID = 1;
 let paused = false;
 let halflifetime = 60;
 
-let permissions = { Raddecay: true, Fission: true, Ion: true, Co: true, Met: true };
-
-// Data from CHATGPT
+let permissions = { Raddecay: true, Fission: true, Ion: true, Co: true, Met: true, Theo: false};
 
 let target = null;
 
@@ -343,6 +341,7 @@ function iterate() {
     permissions.Ion = document.querySelector(".dion").checked;
     permissions.Co = document.querySelector(".dcov").checked;
     permissions.Met = document.querySelector(".dmet").checked;
+    permissions.Theo = document.querySelector(".dthe").checked;
     return;
   }
   flag1 = performance.now();
@@ -418,7 +417,7 @@ function calculateBonding() {
         continue;
       }
 
-      if ((Math.abs(a.elecneg - t.elecneg) > 1.7 || (metals.includes(a.section) && metals.includes(t.section) === false)) && a.atomn < 36 && t.atomn < 36 && permissions.Ion) {
+      if ((Math.abs(a.elecneg - t.elecneg) > 1.7 || (metals.includes(a.section) && metals.includes(t.section) === false)) && permissions.Ion) {
         if (a.charge === 0 && t.charge === 0) {
           if (av / (8 - tv) === 1 && a.bonds.includes(t.ID) === false) {
             // 1:1 ratio, quick bond
@@ -512,9 +511,6 @@ function calculateBonding() {
           tmissing = extendedorbitals[t.elem] - tv - total2;
         }
         if (amissing > 0 && tmissing > 0) {
-          console.log(a.elem);
-          console.log(amissing);
-          console.log(tmissing);
           // if (Math.abs(a.elecneg - t.elecneg) > 0.4) {
           //   if (a.elecneg > t.elecneg) {
           //     a.polarity = abondgoals / -1;
@@ -592,8 +588,15 @@ class particle {
       let dy = a.Y - this.Y;
       let dis = dist(this.X, this.Y, a.X, a.Y);
 
-      if (a.elec[0] < 2 && dis < 200 && this.name === "e-" && a.elem === "He") {
-        a.elec[0] += 1;
+      /* allow ions to reattach */
+      if (a.charge > 0 && dis < 200 && this.name === "e-") {
+        let shells = undefined;
+
+        if (data[a.atomn - 1].shells.length > a.elec.length) {
+          a.elec.push(1);
+        } else {
+          a.elec[a.elec.length - 1] += 1;
+        }
         a.charge -= 1;
         particles.splice(particles.indexOf(this), 1);
       }
@@ -709,6 +712,10 @@ class atom {
 
     if (this.elem === "Gtf") {
       this.atomn = 13;
+    }
+
+    if (this.elem === "Mkl") {
+      this.atomn = 88;
     }
 
     this.updateRadioTimer();
@@ -870,11 +877,17 @@ class atom {
           } else {
             let extrname = res.element.slice(0, res.element.indexOf("-"));
             let extrnumber = res.element.slice(res.element.indexOf("-") + 1);
-            console.log(extrname);
             let neutnum = parseInt(extrnumber) - (data.indexOf(findAtom(extrname)) + 1);
-            let datause = data[this.atomn - 1];
+            let shells = [];
+            console.log(extrname);
+            for (let t of data) {
+              if (t.symbol === extrname) {
+                shells = t.shells.slice();
+                break;
+              }
+            }
             for (let i = 0; i < res.amount; i++) {
-              atoms[nextAtomID] = new atom(extrname, this.X + postemp, this.Y, datause.shells, true, postemp / 2, newran(100) - 50, neutnum, 0);
+              atoms[nextAtomID] = new atom(extrname, this.X + postemp, this.Y, shells, true, postemp / 2, newran(100) - 50, neutnum, 0);
             }
             postemp = 170;
           }
@@ -1041,14 +1054,28 @@ function handle() {
   if (cval === "Gtf") {
     atoms[nextAtomID.toString()] = new atom("Gtf", 100, 1400, [13], true, 10, -40, 13, 0);
   }
+  if (cval === "Mkl") {
+    atoms[nextAtomID.toString()] = new atom("Mkl", 100, 1400, [88], true, 10, -40, 88, 0);
+  }
   let check = cval;
-  if (check.includes("-")) {
+  if (check.includes("-") && check.slice(-1) != '-') {
     check = check.slice(0, check.indexOf("-"));
   }
   for (let t of data) {
     if (t.symbol === check) {
+
+      let atomn = data.indexOf(t) + 1;
+
+      if (atomn > 118 && !permissions.Theo) {
+        return;
+      }
+
       if (cval.includes("-")) {
         let newneut = parseInt(cval.slice(cval.indexOf("-") + 1)) - (data.indexOf(t) + 1);
+
+	if (newneut === NaN || (atomn + newneut) < atomn) {
+	  return;
+	}
         atoms[nextAtomID.toString()] = new atom(t.symbol, 100, 1400, t.shells.slice(), true, 10, -40, newneut, 0);
 
         return;
@@ -1081,6 +1108,9 @@ function settings() {
     setbox.style.opacity = 0.95;
   }
 }
+
+permissions.Theo = document.querySelector(".dthe").checked;
+
 document.querySelector(".btn").onclick = handle;
 document.querySelector(".btn2").onclick = clearall;
 document.querySelector(".setb").onclick = settings;
