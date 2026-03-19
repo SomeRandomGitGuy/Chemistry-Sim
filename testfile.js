@@ -1054,6 +1054,9 @@ function handle() {
   if (cval === "Gtf") {
     atoms[nextAtomID.toString()] = new atom("Gtf", 100, 1400, [13], true, 10, -40, 13, 0);
   }
+  if (cval === "λ") {
+    atoms[nextAtomID.toString()] = new atom("Rcs", 100, 1400, [13], true, 10, -40, 0, 0);
+  }
   if (cval === "Mkl") {
     atoms[nextAtomID.toString()] = new atom("Mkl", 100, 1400, [88], true, 10, -40, 88, 0);
   }

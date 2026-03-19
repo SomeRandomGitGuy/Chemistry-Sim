@@ -134,6 +134,18 @@ const isotopes = {
       ],
     },
   },
+  Rcs: {
+    decay: "",
+    neutrons: 0,
+    halfLife: 1,
+    neutronReaction: {
+      type: "fissile",
+      result: [
+        { element: "Rcs-0", amount: 2},
+        { element: "neutrons", amount: 2 },
+      ],
+    },
+  },
   Mkl: {
     decay: "beta+",
     neutrons: 88,
