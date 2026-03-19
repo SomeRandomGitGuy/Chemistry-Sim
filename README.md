@@ -1,8 +1,20 @@
 # Chemistry-Sim
 
-A Chemistry Simulation by SomeRandomGitGuy and MKL3D
+A Chemistry Simulation started by SomeRandomGitGuy
 
 ## Basic Information
+
+### Contributors
+
+#### SomeRandomGitGuy:
+- Created the base bonding logic
+- Created the basic radioactive decay + fission
+- Created the interface and UI
+
+#### MKL3D
+- Added QOL features
+- Fixed data validation problems
+- Fixed errors in IsotopeData.js
 
 ### RCS
 
@@ -31,7 +43,7 @@ A Chemistry Simulation by SomeRandomGitGuy and MKL3D
 
 ### testfile
 
-Confusingly, the new version, featuring:
+Confusingly, the newest version, featuring:
 
 - Many fixes
 - Theoretical elements

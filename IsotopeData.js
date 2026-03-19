@@ -124,12 +124,25 @@ const isotopes = {
   Gtf: {
     decay: "beta-",
     neutrons: 13,
-    halfLife: 0,
+    halfLife: 1313,
     neutronReaction: {
       type: "fissile",
       result: [
-        { element: "H -1", amount: 1 },
-        { element: "I -126", amount: 1 },
+        { element: "H-1", amount: 1 },
+        { element: "I-126", amount: 1 },
+        { element: "neutrons", amount: 50 },
+      ],
+    },
+  },
+  Mkl: {
+    decay: "beta+",
+    neutrons: 88,
+    halfLife: 1313,
+    neutronReaction: {
+      type: "fissile",
+      result: [
+        { element: "Rb-85", amount: 1 },
+        { element: "Cs-133", amount: 1 },
         { element: "neutrons", amount: 50 },
       ],
     },
