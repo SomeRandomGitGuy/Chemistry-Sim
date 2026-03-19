@@ -572,7 +572,7 @@ function calculateBonding() {
     }
   }
 }
-// 👷🔨🔧⚙️🛠️🚧✨ in the works... maybe
+
 class particle {
   constructor(x, y, vx, vy, charge, name) {
     this.X = x;
@@ -640,7 +640,7 @@ class particle {
 
 function scaleHalfLife(hlf) {
   const mhf = 14050000000;
-  return (Math.log2(hlf + 1) / Math.log2(mhf)) * halflifetime + 1;
+  return (Math.log2(hlf + 1) / Math.log2(mhf)) * halflifetime + 0.2;
 }
 
 function findAtom(name) {
@@ -913,7 +913,7 @@ class atom {
           } else if (this.decaytype === "beta+") {
             let newelem = this.atomn - 1;
             this.neutrons += 1;
-            this.atomn += 1;
+            this.atomn -= 1;
             this.elem = data[newelem - 1].symbol;
             this.elec = data[newelem - 1].shells;
             particles.push(new particle(this.X, this.Y, newran(100) - 50, newran(100) - 50, 1, "e+"));

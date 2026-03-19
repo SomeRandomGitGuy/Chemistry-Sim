@@ -127,7 +127,7 @@ const isotopes = {
   Gtf: {
     decay: "beta-",
     neutrons: 13,
-    halfLife: 1313,
+    halfLife: 0,
     neutronReaction: {
       type: "fissile",
       result: [
@@ -184,7 +184,7 @@ const isotopes = {
   C: { decay: "beta-", neutrons: 8, halfLife: 5730 },
   Ac: { decay: "alpha", neutrons: 139, halfLife: 0.00027 },
   Ni: { decay: "beta-", neutrons: 30, halfLife: 0.0167 },
-  Li: { decay: "beta+", neutrons: 3, halfLife: 1200000 },
+  N: { decay: "beta+", neutrons: 6, halfLife: 1200000 },
   P: { decay: "beta-", neutrons: 15, halfLife: 0.039 },
   Sb: { decay: "beta-", neutrons: 66, halfLife: 0.0378 },
   Fe: { decay: "beta-", neutrons: 31, halfLife: 1.6 },
