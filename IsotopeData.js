@@ -286,7 +286,7 @@ const data = [
   { symbol: "Po", shells: [2, 8, 18, 32, 18, 6], neut: 128, electronegativity: 2.0, section: "Metalloids" },
   { symbol: "At", shells: [2, 8, 18, 32, 18, 7], neut: 125, electronegativity: 2.2, section: "Halogens" },
   { symbol: "Rn", shells: [2, 8, 18, 32, 18, 8], neut: 131, electronegativity: 2.2, section: "Noble gases" },
-  { symbol: "Fr", shells: [2, 8, 18, 32, 18, 8, 1], neut: 136, electronegativity: 0.7, section: "Alkal metals" },
+  { symbol: "Fr", shells: [2, 8, 18, 32, 18, 8, 1], neut: 136, electronegativity: 0.7, section: "Alkali metals" },
   { symbol: "Ra", shells: [2, 8, 18, 32, 18, 8, 2], neut: 138, electronegativity: 0.9, section: "Alkaline earth metals" },
   { symbol: "Ac", shells: [2, 8, 18, 32, 18, 9, 2], neut: 138, electronegativity: 1.1, section: "Actinides" },
   { symbol: "Th", shells: [2, 8, 18, 32, 18, 10, 2], neut: 142, electronegativity: 1.3, section: "Actinides" },
