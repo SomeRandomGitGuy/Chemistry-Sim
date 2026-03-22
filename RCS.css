@@ -130,11 +130,13 @@ body {
 
 ul {
     list-style-type: none;
+    margin-top: 3px;
     padding-left: 15px;
 }
 
 li {
     margin: 10px;
+    margin-top: 3px;
 }
 
 .list2 {

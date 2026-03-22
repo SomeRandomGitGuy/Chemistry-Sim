@@ -31,7 +31,7 @@ let nextAtomID = 1;
 let paused = false;
 let halflifetime = 60;
 
-let permissions = { Raddecay: true, Fission: true, Ion: true, Co: true, Met: true, Theo: false};
+let permissions = { Raddecay: true, Fission: true, Ion: true, Co: true, Met: true, Theo: false, Restrict: true};
 
 let target = null;
 
@@ -342,6 +342,7 @@ function iterate() {
     permissions.Co = document.querySelector(".dcov").checked;
     permissions.Met = document.querySelector(".dmet").checked;
     permissions.Theo = document.querySelector(".dthe").checked;
+    permissions.Restrict = document.querySelector(".drst").checked;
     return;
   }
   flag1 = performance.now();
@@ -417,7 +418,7 @@ function calculateBonding() {
         continue;
       }
 
-      if ((Math.abs(a.elecneg - t.elecneg) > 1.7 || (metals.includes(a.section) && metals.includes(t.section) === false)) && permissions.Ion) {
+      if ((Math.abs(a.elecneg - t.elecneg) > 1.7 || (metals.includes(a.section) && metals.includes(t.section) === false)) && permissions.Ion && (!permissions.Restrict || (a.atomn < 36 && t.atomn < 36))) {
         if (a.charge === 0 && t.charge === 0) {
           if (av / (8 - tv) === 1 && a.bonds.includes(t.ID) === false) {
             // 1:1 ratio, quick bond
