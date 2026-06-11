@@ -6,7 +6,7 @@ function newran(input) {
 
 const canv = document.querySelector(".canv");
 let ctx = canv.getContext("2d");
-const dpr = window.devicePixelRatio;
+const dpr = 2;
 const rect = canv.getBoundingClientRect();
 canv.width = rect.width * dpr;
 canv.height = rect.height * dpr;
