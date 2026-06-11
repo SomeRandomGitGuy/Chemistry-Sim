@@ -1119,6 +1119,8 @@ document.querySelector(".btn").onclick = handle;
 document.querySelector(".btn2").onclick = clearall;
 document.querySelector(".setb").onclick = settings;
 
+document.querySelector(".slide").value = 60;
+
 render();
 
 //setInterval(render, 1);
