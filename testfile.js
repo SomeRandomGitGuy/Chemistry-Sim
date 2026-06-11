@@ -10,6 +10,7 @@ const dpr = window.devicePixelRatio;
 const rect = canv.getBoundingClientRect();
 canv.width = rect.width * dpr;
 canv.height = rect.height * dpr;
+ctx.scale(dpr, dpr);
 ctx.font = "70px serif";
 ctx.fillStyle = "black";
 
