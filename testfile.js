@@ -957,13 +957,13 @@ class atom {
 
     // if (this.vx > 0) this.vx /= 1.02;
     // if (this.vy > 0) this.vy /= 1.02;
-    if (this.X > window.innerWidth * 2 || this.X < 1) {
+    if (this.X > window.innerWidth*dpr || this.X < 1) {
       this.vx *= -1;
     }
-    if (this.Y > window.innerHeight * 2 || this.Y < 100) {
+    if (this.Y > window.innerHeight*dpr || this.Y < 100) {
       this.vy *= -1;
     }
-    if (this.X > window.innerWidth * 2 + 10) {
+    if (this.X > window.innerWidth*dpr + 10) {
       this.X -= 10;
       this.vx *= 0.8;
     }
@@ -971,7 +971,7 @@ class atom {
       this.X += 10;
       this.vx *= 0.8;
     }
-    if (this.Y > window.innerHeight * 2 + 10) {
+    if (this.Y > window.innerHeight*dpr + 10) {
       this.Y -= 10;
       this.vy *= 0.8;
     }
@@ -1085,7 +1085,7 @@ function handle() {
 
         return;
       }
-      atoms[nextAtomID.toString()] = new atom(t.symbol, 100, 1400, t.shells.slice(), true, 10, -40, t.neut, 0);
+      atoms[nextAtomID.toString()] = new atom(t.symbol, 100/dpr, 1600/dpr, t.shells.slice(), true, 10, -40, t.neut, 0);
       console.log(nextAtomID);
       return;
     }
