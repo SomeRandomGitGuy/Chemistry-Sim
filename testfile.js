@@ -1085,7 +1085,7 @@ function handle() {
 
         return;
       }
-      atoms[nextAtomID.toString()] = new atom(t.symbol, 100/dpr, 1600/dpr, t.shells.slice(), true, 10, -40, t.neut, 0);
+      atoms[nextAtomID.toString()] = new atom(t.symbol, (window.innerHeight*dpr)/7, (window.innerHeight*dpr)/1.5, t.shells.slice(), true, 10, -40, t.neut, 0);
       console.log(nextAtomID);
       return;
     }

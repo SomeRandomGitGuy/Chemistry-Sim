@@ -25,6 +25,7 @@ h5 {
 
 body {
     font-family: Cambo;
+    overflow: hidden;
 }
 
 .inpt {
