@@ -1077,9 +1077,9 @@ function handle() {
       if (cval.includes("-")) {
         let newneut = parseInt(cval.slice(cval.indexOf("-") + 1)) - (data.indexOf(t) + 1);
 
-	if (newneut === NaN || (atomn + newneut) < atomn) {
-	  return;
-	}
+        if (newneut === NaN || (atomn + newneut) < atomn) {
+          return;
+        }
         atoms[nextAtomID.toString()] = new atom(t.symbol, 100, 1400, t.shells.slice(), true, 10, -40, newneut, 0);
 
         return;
