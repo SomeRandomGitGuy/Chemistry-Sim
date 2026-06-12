@@ -98,7 +98,7 @@ body {
     width: 50px;
     left: 96%;
     top: 94%;
-    z-index: 999;
+    z-index: 99;
     transition: all, 0.5s;
 }
 
@@ -123,6 +123,7 @@ body {
     border-radius: 30px;
     box-shadow: 0px 20px 10px black;
     backdrop-filter: blur(10px);
+    z-index: 999;
 }
 
 .listcontainer {
