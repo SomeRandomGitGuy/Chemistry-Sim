@@ -98,6 +98,7 @@ body {
     width: 50px;
     left: 96%;
     top: 94%;
+    z-index: 999;
     transition: all, 0.5s;
 }
 
